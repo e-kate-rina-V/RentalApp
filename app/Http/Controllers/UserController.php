@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -14,7 +16,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        
+
+        // dd(Auth::user());
+
         // return view('users', compact('users'));
     }
 
@@ -86,9 +90,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user, Request $request)
     {
-        //
+        // return Storage::download('test.txt', 'palmo.txt');
     }
 
     /**

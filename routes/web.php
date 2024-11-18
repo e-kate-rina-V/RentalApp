@@ -22,11 +22,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/mainpage', function () {
+    return view('mainpage');
+});
+
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
 // Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
 
 Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+
+Route::get('/users/show', [UserController::class, 'show'])->name('users.show');
 
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
