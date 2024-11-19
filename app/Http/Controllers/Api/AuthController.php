@@ -13,8 +13,9 @@ class AuthController extends Controller
     {
         $validateUser = Validator::make($request->all(), [
             'name' => "required|string|max:255",
-            'email' => "required|string|unique:users,email",
+            'email' => "required|string|email|max:255|unique:users",
             'password' => "required|string|min:8|confirmed",
+            'role' => 'required|in:renter,landlord'
         ]);
 
         if ($validateUser->fails()) {
@@ -28,6 +29,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
 
         return response()->json([

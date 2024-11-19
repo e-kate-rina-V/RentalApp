@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CsrfTokenController;
-use App\Http\Controllers\MyPostController;
-use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,13 +24,9 @@ Route::get('/mainpage', function () {
     return view('mainpage');
 });
 
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
-// Route::get('/users/create', [UserController::class, 'create'])->name('user.create');
-
-Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
-
-Route::get('/users/show', [UserController::class, 'show'])->name('users.show');
+Route::post('/users/register', [UserController::class, 'register'])->name('users.register');
+Route::post('/users/login', [UserController::class, 'login'])->name('users.login');
 
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
