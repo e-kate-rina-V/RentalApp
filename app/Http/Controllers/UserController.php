@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-
     public function register(Request $request)
     {
         $validateUser = Validator::make($request->all(), [
@@ -25,7 +24,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $validateUser->errors()
-            ],);
+            ], 422);
         }
 
         $user = User::create([
@@ -36,8 +35,9 @@ class UserController extends Controller
         ]);
 
         return response()->json([
+            'message' => 'User registered successfully',
             'token' => $user->createToken('API Token')->plainTextToken
-        ],);
+        ], 201);
     }
 
     public function login(Request $request)
@@ -51,19 +51,19 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $validateUser->errors()
-            ],);
+            ], 422);
         }
 
         if (!auth()->attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Credentials not match',
-            ],);
+                'message' => 'Invalid credentials', 
+            ], 401); 
         }
 
         $user = User::where('email', $request->email)->first();
 
         return response()->json([
             'token' => $user->createToken('API Token')->plainTextToken
-        ],);
+        ], 200); 
     }
 }

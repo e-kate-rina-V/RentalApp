@@ -28,6 +28,7 @@ Route::get('/mainpage', function () {
 Route::post('/users/register', [UserController::class, 'register'])->name('users.register');
 Route::post('/users/login', [UserController::class, 'login'])->name('users.login');
 
+
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
 });
@@ -35,13 +36,10 @@ Route::get('/csrf-token', function () {
 Route::get('csrf-token', [CsrfTokenController::class, 'getToken']);
 
 
-// Route::get('/palmo', function () {
-//     return view('palmo');
-// });
+
+
 
 # Route::view(uri: 'palmo', view: 'palmo');
-
-# Route::get('/user', [UserController::class, 'getUser']);
 
 # Route::get('/user/{id}/profile/{groupId?}', [UserController::class, 'getUser']);
 
