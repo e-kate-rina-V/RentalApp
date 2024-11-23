@@ -36,6 +36,12 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
             'token' => $user->createToken('API Token')->plainTextToken
         ], 201);
     }
@@ -56,14 +62,20 @@ class UserController extends Controller
 
         if (!auth()->attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Invalid credentials', 
-            ], 401); 
+                'message' => 'Invalid credentials',
+            ], 401);
         }
 
         $user = User::where('email', $request->email)->first();
 
         return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
             'token' => $user->createToken('API Token')->plainTextToken
-        ], 200); 
+        ], 200);
     }
 }

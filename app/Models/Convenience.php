@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Chat extends Model
+class Convenience extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'chats';
+    protected $table = 'conveniences';
     protected $guarded = false;
+
+    public function ad()
+    {
+        return $this->belongsTo(Ad::class);
+    }
 }

@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ads', function (Blueprint $table) {
+        Schema::create('conveniences', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('description');
-            $table->float('price');
-            $table->float('rating');
-            $table->unsignedBigInteger('user_id');
-            $table->index('user_id', 'ad_user_idx');
-            $table->foreign('user_id', 'ad_user_fk')->on('users')->references('id');
+            $table->string('name');
+            $table->unsignedBigInteger('ad_id');
+            $table->index('ad_id', 'convenience_ad_idx');
+            $table->foreign('ad_id', 'convenience_ad_fk')->on('ads')->references('id');
             $table->timestamps();
-
             $table->softDeletes();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ads');
+        Schema::dropIfExists('conveniences');
     }
 };

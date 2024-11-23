@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
+        Schema::create('ads', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('prem_type');
+            $table->string('accom_type');
+            $table->integer('guest_count');
             $table->string('description');
-            $table->string('rate');
-            $table->unsignedBigInteger('ad_id');
+            $table->float('price');
+            $table->float('rating');
             $table->unsignedBigInteger('user_id');
-            $table->index('ad_id', 'review_ad_idx');
-            $table->foreign('ad_id', 'review_ad_fk')->on('ads')->references('id');
-            $table->index('user_id', 'review_user_idx');
-            $table->foreign('user_id', 'review_user_fk')->on('users')->references('id');
+            $table->index('user_id', 'ad_user_idx');
+            $table->foreign('user_id', 'ad_user_fk')->on('users')->references('id');
             $table->timestamps();
-
             $table->softDeletes();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reviews');
+        Schema::dropIfExists('ads');
     }
 };

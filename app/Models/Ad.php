@@ -12,5 +12,18 @@ class Ad extends Model
     use SoftDeletes;
 
     protected $table = 'ads';
-    protected $guarded = false;
+    protected $fillable = [
+        'title', 'description', 'prem_type', 'accom_type', 'guest_count', 'price', 'user_id'
+    ];
+
+
+    public function conveniences()
+    {
+        return $this->hasMany(Convenience::class);
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class);
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\CsrfTokenController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +28,7 @@ Route::get('/mainpage', function () {
 Route::post('/users/register', [UserController::class, 'register'])->name('users.register');
 Route::post('/users/login', [UserController::class, 'login'])->name('users.login');
 
+Route::post('/ads/ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
 Route::get('/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);

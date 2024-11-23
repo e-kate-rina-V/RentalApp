@@ -13,4 +13,9 @@ class Material extends Model
 
     protected $table = 'materials';
     protected $guarded = false;
+
+    public function ad()
+    {
+        return $this->belongsTo(Ad::class);
+    }
 }
