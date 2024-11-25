@@ -1,20 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdController;
-use App\Http\Controllers\CsrfTokenController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,20 +17,22 @@ Route::get('/mainpage', function () {
 });
 
 
-Route::post('/users/register', [UserController::class, 'register'])->name('users.register');
-Route::post('/users/login', [UserController::class, 'login'])->name('users.login');
+// Route::post('/ads/ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
-Route::post('/ads/ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
-
-Route::get('/csrf-token', function () {
-    return response()->json(['csrf_token' => csrf_token()]);
+Route::get('/user', function () {
+    if (auth()->check()) {
+        return response()->json(auth()->user());
+    } else {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
 });
 
-Route::get('csrf-token', [CsrfTokenController::class, 'getToken']);
+Route::post('register', [RegisterController::class, 'register']);
+Route::post('login', [LoginController::class, 'login']);
 
+// Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
 
-
-
+// Route::post('/users/login', [UserController::class, 'login'])->name('user.login');
 
 # Route::view(uri: 'palmo', view: 'palmo');
 
@@ -85,3 +79,11 @@ Route::get('csrf-token', [CsrfTokenController::class, 'getToken']);
 // });
 
 // Route::resource(name: 'tasks', controller: TaskController::class); // Эквивалентная строка 7-ми строкам
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

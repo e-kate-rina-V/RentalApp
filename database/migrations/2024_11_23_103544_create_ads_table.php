@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('guest_count');
             $table->string('description');
             $table->float('price');
-            $table->float('rating');
             $table->unsignedBigInteger('user_id');
             $table->index('user_id', 'ad_user_idx');
             $table->foreign('user_id', 'ad_user_fk')->on('users')->references('id');

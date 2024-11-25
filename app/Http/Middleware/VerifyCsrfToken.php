@@ -12,8 +12,10 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-         'users/register',
-         'users/login',
-         'ads/ad_register',
+        'http://localhost:8080/*',
+        '/csrf-token',
+        'users/register',
+        '/users/login',
+        'ads/ad_register',
     ];
 }
