@@ -30,6 +30,8 @@ Route::get('/user', function () {
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 
+Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
 
 // Route::post('/users/login', [UserController::class, 'login'])->name('user.login');
