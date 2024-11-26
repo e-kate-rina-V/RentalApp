@@ -17,8 +17,6 @@ Route::get('/mainpage', function () {
 });
 
 
-// Route::post('/ads/ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
-
 Route::get('/user', function () {
     if (auth()->check()) {
         return response()->json(auth()->user());
@@ -31,6 +29,8 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
 

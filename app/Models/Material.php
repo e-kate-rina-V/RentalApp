@@ -12,10 +12,14 @@ class Material extends Model
     use SoftDeletes;
 
     protected $table = 'materials';
-    protected $guarded = false;
+    
+    protected $fillable = [
+        'source',
+        'ad_id',
+    ];
 
     public function ad()
     {
-        return $this->belongsTo(Ad::class);
+        return $this->belongsTo(Ad::class, 'ad_id');
     }
 }

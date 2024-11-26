@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ad;
+use App\Models\Convenience;
+use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +18,6 @@ class AdController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        Log::info('Request data:', $request->all());
-
         $validateAd = Validator::make($request->all(), [
             'title' => "required|string|max:255",
             'description' => "required|string|max:1000",
@@ -25,81 +25,65 @@ class AdController extends Controller
             'accom_type' => 'required|in:entire_place,private_room,shared_room',
             'guest_count' => 'required|integer|min:1',
             'price' => 'required|numeric|min:1',
-            // 'conven' => 'array',
-            // 'conven.*' => 'string',
-            // 'materials' => 'array',
-            // 'materials.*' => 'file|mimes:jpeg,png,jpg,mp4,mov|max:2048'
+            'conven' => 'array',
+            'conven.*' => 'string|max:255',
+            'materials' => 'array',
+            'materials.*' => 'file|mimes:jpeg,png,jpg,mp4,mov|max:2048',
         ]);
 
         if ($validateAd->fails()) {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $validateAd->errors()
+                'errors' => $validateAd->errors(),
             ], 422);
         }
 
         try {
-            $ad = new Ad();
-            $ad->title = $request->input('title');
-            $ad->description = $request->input('description');
-            $ad->prem_type = $request->input('prem_type');
-            $ad->accom_type = $request->input('accom_type');
-            $ad->guest_count = $request->input('guest_count');
-            $ad->price = $request->input('price');
-            $ad->user_id = auth()->id();
-            $ad->save();
+            DB::beginTransaction();
+
+            $ad = Ad::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'prem_type' => $request->prem_type,
+                'accom_type' => $request->accom_type,
+                'guest_count' => $request->guest_count,
+                'price' => $request->price,
+                'user_id' => auth()->id(),
+            ]);
+
+            if ($request->has('conven')) {
+                foreach ($request->input('conven') as $convenience) {
+                    Convenience::create([
+                        'name' => $convenience,
+                        'ad_id' => $ad->id,
+                    ]);
+                }
+            }
+
+            if ($request->hasFile('materials') && is_array($request->file('materials'))) {
+                foreach ($request->file('materials') as $file) {
+                    $path = $file->store('materials', 'public');
+                    Material::create([
+                        'source' => $path,
+                        'ad_id' => $ad->id,
+                    ]);
+                }
+            } else {
+                Log::error('No materials files uploaded');
+            }
+
+            DB::commit();
 
             return response()->json(['message' => 'Ad registered successfully'], 200);
+
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error saving ad:', ['error' => $e->getMessage()]);
 
             return response()->json([
                 'message' => 'Failed to register ad',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
-
-        // DB::beginTransaction();
-
-        // try {
-        //     $ad = Ad::create(array_merge(
-        //         $request->only(['title', 'description', 'prem_type', 'accom_type', 'guest_count', 'price']),
-        //         ['user_id' => auth()->id()]
-        //     ));
-
-        //     if ($request->has('conven')) {
-        //         $ad->conveniences()->createMany(
-        //             collect($request->conven)->map(fn($name) => ['name' => $name])->toArray()
-        //         );
-        //     }
-
-        //     if ($request->hasFile('materials')) {
-        //         $ad->materials()->createMany(
-        //             collect($request->file('materials'))->map(function ($file) {
-        //                 $path = $file->store('uploads', 'public');
-        //                 return ['source' => $path];
-        //             })->toArray()
-        //         );
-        //     }
-
-
-        //     DB::commit();
-
-        //     return response()->json([
-        //         'message' => 'Ad registered successfully',
-        //         'ad' => $ad
-        //     ], 201);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-
-        //     return response()->json([
-        //         'message' => 'Failed to register ad',
-        //         'error' => $e->getMessage()
-        //     ], 500);
-        // }
-
-        // if (!auth()->check()) {
-        //     return response()->json(['message' => 'Unauthorized'], 401);
-        // }
     }
 }

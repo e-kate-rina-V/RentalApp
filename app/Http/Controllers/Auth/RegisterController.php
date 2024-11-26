@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:renter,landlord', 
+            'role' => 'required|string|in:renter,landlord',
         ]);
 
         if ($validator->fails()) {
@@ -33,12 +34,11 @@ class RegisterController extends Controller
                 'role' => $request->role,
             ]);
 
-            $token = $user->createToken('API Token')->plainTextToken;
+            event(new Registered($user));
 
             return response()->json([
                 'message' => 'Registration successful',
                 'user' => $user,
-                'token' => $token 
             ]);
         } catch (\Exception $e) {
             Log::error('Error during registration', ['error' => $e->getMessage()]);

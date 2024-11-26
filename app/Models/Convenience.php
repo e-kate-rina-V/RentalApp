@@ -12,10 +12,14 @@ class Convenience extends Model
     use SoftDeletes;
 
     protected $table = 'conveniences';
-    protected $guarded = false;
+    
+    protected $fillable = [
+        'name',
+        'ad_id',
+    ];
 
     public function ad()
     {
-        return $this->belongsTo(Ad::class);
+        return $this->belongsTo(Ad::class, 'ad_id');
     }
 }

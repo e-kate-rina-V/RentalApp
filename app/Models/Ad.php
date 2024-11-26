@@ -16,14 +16,13 @@ class Ad extends Model
         'title', 'description', 'prem_type', 'accom_type', 'guest_count', 'price', 'user_id'
     ];
 
-
     public function conveniences()
     {
-        return $this->hasMany(Convenience::class);
+        return $this->hasMany(Convenience::class, 'ad_id');
     }
 
     public function materials()
     {
-        return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class, 'ad_id');
     }
 }
