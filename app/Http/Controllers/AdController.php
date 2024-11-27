@@ -75,7 +75,6 @@ class AdController extends Controller
             DB::commit();
 
             return response()->json(['message' => 'Ad registered successfully'], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error saving ad:', ['error' => $e->getMessage()]);
@@ -85,5 +84,19 @@ class AdController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function show($id)
+    {
+        if (!is_numeric($id)) {
+            return response()->json(['error' => 'Invalid ad ID'], 400);
+        }
+
+        $ad = Ad::find($id);
+        if (!$ad) {
+            return response()->json(['error' => 'Ad not found'], 404);
+        }
+
+        return response()->json($ad);
     }
 }

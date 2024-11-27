@@ -4,6 +4,7 @@ use App\Http\Controllers\AdController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
+use App\Models\Ad;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,15 @@ Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
+
+Route::get('/ads/{id}', [AdController::class, 'show']);
+
+Route::get('/ads', function () {
+    $user = auth()->user();  // Получаем авторизованного пользователя
+    $ads = $user->ads;  // Получаем его объявления
+    return response()->json($ads);
+});
+
 
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
 
