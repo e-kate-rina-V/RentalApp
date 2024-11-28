@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Models\Ad;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,12 +34,28 @@ Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanc
 
 Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
-Route::get('/ads/{id}', [AdController::class, 'show']);
+// Route::get('/ads/{id}', [AdController::class, 'show']);
 
 Route::get('/ads', function () {
-    $user = auth()->user();  // Получаем авторизованного пользователя
-    $ads = $user->ads;  // Получаем его объявления
+    $user = Auth::user();
+    if (!$user) {
+        // Log::info('Неавторизованный запрос.');
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    $ads = Ad::where('user_id', $user->id)->with('materials')->get();
+
+    // Log::info('Объявления пользователя:', $ads->toArray());
     return response()->json($ads);
+});
+
+Route::get('/ads/{id}', function ($id) {
+    $ad = Ad::with(['materials', 'conveniences'])->find($id);
+
+    if (!$ad) {
+        return response()->json(['error' => 'Ad not found'], 404);
+    }
+
+    return response()->json($ad);
 });
 
 

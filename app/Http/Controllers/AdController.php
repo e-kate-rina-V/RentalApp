@@ -85,18 +85,4 @@ class AdController extends Controller
             ], 500);
         }
     }
-
-    public function show($id)
-    {
-        if (!is_numeric($id)) {
-            return response()->json(['error' => 'Invalid ad ID'], 400);
-        }
-
-        $ad = Ad::find($id);
-        if (!$ad) {
-            return response()->json(['error' => 'Ad not found'], 404);
-        }
-
-        return response()->json($ad);
-    }
 }
