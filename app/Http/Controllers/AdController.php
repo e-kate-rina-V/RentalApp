@@ -20,7 +20,7 @@ class AdController extends Controller
 
         $validateAd = Validator::make($request->all(), [
             'title' => "required|string|max:255",
-            'description' => "required|string|max:1000",
+            'description' => "required|string|max:65535",
             'prem_type' => 'required|in:house,flat,hotel_room',
             'accom_type' => 'required|in:entire_place,private_room,shared_room',
             'guest_count' => 'required|integer|min:1',

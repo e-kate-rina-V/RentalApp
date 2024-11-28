@@ -34,17 +34,13 @@ Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanc
 
 Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
-// Route::get('/ads/{id}', [AdController::class, 'show']);
-
 Route::get('/ads', function () {
     $user = Auth::user();
     if (!$user) {
-        // Log::info('Неавторизованный запрос.');
         return response()->json(['error' => 'Unauthorized'], 401);
     }
     $ads = Ad::where('user_id', $user->id)->with('materials')->get();
-
-    // Log::info('Объявления пользователя:', $ads->toArray());
+    
     return response()->json($ads);
 });
 
