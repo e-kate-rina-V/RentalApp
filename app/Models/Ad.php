@@ -13,7 +13,13 @@ class Ad extends Model
 
     protected $table = 'ads';
     protected $fillable = [
-        'title', 'description', 'prem_type', 'accom_type', 'guest_count', 'price', 'user_id'
+        'title',
+        'description',
+        'prem_type',
+        'accom_type',
+        'guest_count',
+        'price',
+        'user_id'
     ];
 
     public function conveniences()

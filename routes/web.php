@@ -40,19 +40,13 @@ Route::get('/ads', function () {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
     $ads = Ad::where('user_id', $user->id)->with('materials')->get();
-    
+
     return response()->json($ads);
 });
 
-Route::get('/ads/{id}', function ($id) {
-    $ad = Ad::with(['materials', 'conveniences'])->find($id);
+Route::get('/ads/{id}', [AdController::class, 'show']);
 
-    if (!$ad) {
-        return response()->json(['error' => 'Ad not found'], 404);
-    }
-
-    return response()->json($ad);
-});
+Route::get('/all_ads', [AdController::class, 'index']);
 
 
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');

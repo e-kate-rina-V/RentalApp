@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Validator;
 
 class AdController extends Controller
 {
+    public function index()
+    {
+        try {
+            $ads = Ad::with(['materials', 'conveniences'])->get();
+            return response()->json($ads, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ошибка при получении объявлений.'], 500);
+        }
+    }
+
     public function ad_register(Request $request)
     {
         if (!auth()->check()) {
@@ -84,5 +94,16 @@ class AdController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function show($id)
+    {
+        $ad = Ad::with(['materials', 'conveniences'])->find($id);
+
+        if (!$ad) {
+            return response()->json(['error' => 'Ad not found'], 404);
+        }
+
+        return response()->json($ad, 200);
     }
 }
