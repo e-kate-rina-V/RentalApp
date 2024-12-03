@@ -19,7 +19,7 @@ class Ad extends Model
         'accom_type',
         'guest_count',
         'price',
-        'user_id'
+        'user_id',
     ];
 
     public function conveniences()

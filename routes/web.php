@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Models\Ad;
 use Illuminate\Http\Client\Request;
@@ -47,6 +48,8 @@ Route::get('/ads', function () {
 Route::get('/ads/{id}', [AdController::class, 'show']);
 
 Route::get('/all_ads', [AdController::class, 'index']);
+
+Route::post('/reservation', [ReservationController::class, 'store']);
 
 
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
