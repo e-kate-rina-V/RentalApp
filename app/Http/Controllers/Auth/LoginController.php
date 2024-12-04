@@ -15,27 +15,22 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Валидация входных данных
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8',
         ]);
 
-        // Если есть ошибки валидации
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Пытаемся аутентифицировать пользователя
         if (Auth::attempt($request->only('email', 'password'))) {
-            // Если аутентификация прошла успешно
             return response()->json([
                 'message' => 'Login successful',
                 'user' => Auth::user()
             ]);
         }
 
-        // Если аутентификация не удалась
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
 

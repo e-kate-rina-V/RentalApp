@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Models\Ad;
@@ -50,6 +51,11 @@ Route::get('/ads/{id}', [AdController::class, 'show']);
 Route::get('/all_ads', [AdController::class, 'index']);
 
 Route::post('/reservation', [ReservationController::class, 'store']);
+
+Route::post('/chats', [ChatController::class, 'createChat']);
+
+Route::middleware('auth:sanctum')->get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
+Route::middleware('auth:sanctum')->post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
 
 
 // Route::post('/users/register', [UserController::class, 'register'])->name('user.register');

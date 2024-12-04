@@ -4,6 +4,7 @@ use App\Http\Controllers\AdController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,6 @@ Route::middleware('auth')->get('/user', function () {
     return Auth::user();
 });
 
+// Route::middleware('auth:sanctum')->group(function () {
 
-// Route::post('register', [RegisterController::class, 'register']);
-// Route::post('login', [LoginController::class, 'login']);
-// Route::post('password/email', [ResetPasswordController::class, 'sendResetLinkEmail']);
-// Route::post('password/reset', [ResetPasswordController::class, 'reset']);
+// });
