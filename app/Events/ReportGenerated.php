@@ -10,21 +10,21 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReportGenerated
+class ReportGenerated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $userId;
-    public $filePath;
+    public $fileName;
+    public $message;
 
-    public function __construct($userId, $filePath)
+    public function __construct($fileName, $message)
     {
-        $this->userId = $userId;
-        $this->filePath = $filePath;
+        $this->fileName = $fileName;
+        $this->message = $message;
     }
 
     public function broadcastOn()
     {
-        return new Channel('user.' . $this->userId);
+        return new Channel('reports');
     }
 }

@@ -6,17 +6,52 @@ use App\Models\Ad;
 use App\Models\Convenience;
 use App\Models\Material;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AdController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $ads = Ad::with(['materials', 'conveniences'])->get();
-            return response()->json($ads, 200);
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+    
+            $query = Ad::with(['materials', 'conveniences']);
+    
+            if ($request->has('premType') && $request->premType != '') {
+                $query->where('prem_type', $request->premType);
+            }
+    
+            if ($request->has('accomType') && $request->accomType != '') {
+                $query->where('accom_type', $request->accomType);
+            }
+    
+            if ($request->has('priceRange') && $request->priceRange != '') {
+                $query->where('price', '<=', $request->priceRange);
+            }
+    
+            if ($request->has('guestCount') && $request->guestCount != '') {
+                $query->where('guest_count', '>=', $request->guestCount);
+            }
+    
+            if ($request->has('conveniences')) {
+                foreach ($request->conveniences as $convenience => $value) {
+                    if ($value) {
+                        $query->whereHas('conveniences', function ($q) use ($convenience) {
+                            $q->where('name', $convenience);
+                        });
+                    }
+                }
+            }
+    
+            $ads = $query->paginate(2); 
+    
+            return response()->json($ads);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Ошибка при получении объявлений.'], 500);
         }

@@ -6,11 +6,11 @@
     <title>Бронирование подтверждено</title>
 </head>
 <body>
-    <h1>Ваше бронирование подтверждено!</h1>
-    <p>Здравствуйте, {{ $reservation->user->name }}.</p>
-    <p>Ваше бронирование для объявления "{{ $reservation->ad->title }}" успешно подтверждено.</p>
-    <p>Даты пребывания: с {{ $reservation->arrival_date }} по {{ $reservation->depart_date }}</p>
-    <p>Количество ночей: {{ $reservation->nights_num }}</p>
-    <p>Общая стоимость: {{ $reservation->total_cost }}₴</p>
+    <h1>Ваше бронювання підтверджено!</h1>
+    <p>Добрий день, {{ $reservation->user->name }}.</p>
+    <p>Ваше бронювання для оголошення "{{ $reservation->ad->title }}" успішно підтверджено.</p>
+    <p>Дати перебування з {{ $reservation->arrival_date }} по {{ $reservation->depart_date }}</p>
+    <p>Кількість ночей: {{ $reservation->nights_num }}</p>
+    <p>Загальна вартість: {{ $reservation->total_cost }}₴</p>
 </body>
 </html>

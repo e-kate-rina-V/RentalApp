@@ -22,6 +22,7 @@ class Reservation extends Model
         'total_cost',
         'ad_id',
         'user_id',
+        'status',
     ];
 
     public function user()
@@ -32,5 +33,15 @@ class Reservation extends Model
     public function ad()
     {
         return $this->belongsTo(Ad::class);
+    }
+
+    public function getStartDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value);
+    }
+
+    public function getEndDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value);
     }
 }

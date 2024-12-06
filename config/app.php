@@ -155,8 +155,7 @@ return [
     */
 
     'providers' => [
-
-        Barryvdh\DomPDF\ServiceProvider::class,
+        Spatie\LaravelPdf\PdfServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -179,7 +178,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        
+
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
@@ -200,7 +199,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
+        'Pdf' => Spatie\LaravelPdf\Facades\Pdf::class,
     ])->toArray(),
 
 ];
