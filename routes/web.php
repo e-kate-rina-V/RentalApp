@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
 use App\Models\Ad;
 use Illuminate\Http\Client\Request;
@@ -14,14 +15,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPdf\Facades\Pdf;
-
-
-Route::get('/test-pdf', function () {
-    $pdf = PDF::html('<h1>Test PDF</h1>');
-
-    return $pdf->download('test.pdf');
-});
-
 
 Route::get('/user', function () {
     if (auth()->check()) {
@@ -59,10 +52,13 @@ Route::get('/all_ads', [AdController::class, 'index']);
 
 Route::post('/reservation', [ReservationController::class, 'store']);
 
-Route::post('/chats', [ChatController::class, 'createChat']);
+Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
 
-Route::middleware('auth:sanctum')->get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
-Route::middleware('auth:sanctum')->post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
+
+// Route::post('/chats', [ChatController::class, 'createChat']);
+
+// Route::middleware('auth:sanctum')->get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
+// Route::middleware('auth:sanctum')->post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('ads', AdminAdController::class);

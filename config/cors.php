@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'ads/*', 'all_ads', 'ads', 'login', 'register', 'mainpage', 'logout', 'ad_register', 'reservation', 'chats', 'chats/*', 'sanctum/csrf-cookie', 'csrf-token'],
+    'paths' => ['api/*', 'ads/*', 'all_ads', 'ads', 'login', 'register', 'mainpage', 'logout', 'ad_register', 'reservation', 'chats', 'chats/*', 'generate-report', 'sanctum/csrf-cookie', 'csrf-token'],
 
     'allowed_methods' => ['*'],
 

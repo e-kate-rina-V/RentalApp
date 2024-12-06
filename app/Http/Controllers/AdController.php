@@ -49,7 +49,7 @@ class AdController extends Controller
                 }
             }
     
-            $ads = $query->paginate(2); 
+            $ads = $query->paginate(5); 
     
             return response()->json($ads);
         } catch (\Exception $e) {

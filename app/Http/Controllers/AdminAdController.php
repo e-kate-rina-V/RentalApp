@@ -41,9 +41,9 @@ class AdminAdController extends Controller
     {
         $users = User::all();
 
-        // dd(route('admin.ads.update', ['ad' => $ad->id]));
-
-        return view('admin.ads.edit', compact('ad', 'users'));
+        dd(route('admin.ads.update', $ad->id));
+         
+        // return view('admin.ads.edit', compact('ad', 'users'));
     }
 
     public function update(Request $request, Ad $ad)

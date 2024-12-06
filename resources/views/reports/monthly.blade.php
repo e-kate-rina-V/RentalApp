@@ -29,12 +29,17 @@
                 </tr>
             </thead>
             <tbody>
+                @if(count($incomeTrend) > 0)
                 @foreach ($incomeTrend as $trend)
                 <tr>
                     <td>{{ $trend->date }}</td>
                     <td>${{ number_format($trend->total_income, 2) }}</td>
                 </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td colspan="2">No data available.</td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -49,6 +54,7 @@
                 </tr>
             </thead>
             <tbody>
+                @if (count($seasonalData) > 0 )
                 @foreach ($seasonalData as $season)
                 <tr>
                     <td>
@@ -56,13 +62,17 @@
                         @case(1) Winter @break
                         @case(2) Spring @break
                         @case(3) Summer @break
-                        @case(4) Fall @break
+                        @case(4) Autumn @break
                         @default Unknown
                         @endswitch
                     </td>
                     <td>{{ $season->bookings }}</td>
                 </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td colspan="2">No data available.</td>
+                </tr>
             </tbody>
         </table>
     </div>
