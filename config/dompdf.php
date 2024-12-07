@@ -15,16 +15,20 @@ return [
 
     'public_path' => null,  // Override the public path if needed
 
-    'isHtml5ParserEnabled' => true,
-
-    'isFontSubsettingEnabled' => true,
-
     /*
      * Dejavu Sans font is missing glyphs for converted entities, turn it off if you need to show € and £.
      */
     'convert_entities' => true,
 
     'options' => [
+
+        'isHtml5ParserEnabled' => true, 
+        'isPhpEnabled' => true, 
+        'isHtml5ParserEnabled' => true,
+        'isFontSubsettingEnabled' => true,
+        'isRemoteEnabled' => true,
+        'dpi' => 96,
+
         /**
          * The location of the DOMPDF font directory
          *

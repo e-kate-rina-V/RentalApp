@@ -54,7 +54,6 @@ Route::post('/reservation', [ReservationController::class, 'store']);
 
 Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
 
-
 // Route::post('/chats', [ChatController::class, 'createChat']);
 
 // Route::middleware('auth:sanctum')->get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);

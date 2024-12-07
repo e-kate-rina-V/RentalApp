@@ -72,15 +72,16 @@ class GenerateMonthlyReportJob implements ShouldQueue
                 'incomeTrend' => $incomeTrend->toArray(),
             ]);
 
+            $pdfContent = $pdf->output();
             $fileName = 'monthly_report_' . now()->format('Y_m_d_His') . '.pdf';
-            Storage::put('reports/' . $fileName, $pdf->output());
+
+            Storage::put('reports/' . $fileName, $pdfContent);
             Log::info('PDF сохранён в: ' . storage_path('app/reports/' . $fileName));
-            
 
             broadcast(new ReportGenerated($fileName, 'Отчет успешно сгенерирован.'));
         } catch (\Exception $e) {
             Log::error('Ошибка при генерации отчета: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());  
+            Log::error($e->getTraceAsString());
         }
     }
 }

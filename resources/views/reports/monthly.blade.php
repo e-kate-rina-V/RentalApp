@@ -15,8 +15,13 @@
 
     <div class="section">
         <h2>General Statistics</h2>
-        <p><strong>Total Listings:</strong> {{ $totalAds }}</p>
-        <p><strong>Total Income:</strong> ${{ number_format($income, 2) }}</p>
+        <div class="summary">
+            <h2>Summary</h2>
+            <ul>
+                <li>Total Listings: {{ $totalAds }}</li>
+                <li>Total Income: ${{ number_format($income, 2) }}</li>
+            </ul>
+        </div>
     </div>
 
     <div class="section">
@@ -29,17 +34,16 @@
                 </tr>
             </thead>
             <tbody>
-                @if(count($incomeTrend) > 0)
-                @foreach ($incomeTrend as $trend)
+                @forelse ($incomeTrend as $trend)
                 <tr>
-                    <td>{{ $trend->date }}</td>
-                    <td>${{ number_format($trend->total_income, 2) }}</td>
+                    <td>{{ $trend['date'] }}</td>
+                    <td>${{ number_format($trend['total_income'], 2) }}</td>
                 </tr>
-                @endforeach
-                @else
+                @empty
                 <tr>
                     <td colspan="2">No data available.</td>
                 </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -54,25 +58,19 @@
                 </tr>
             </thead>
             <tbody>
-                @if (count($seasonalData) > 0 )
-                @foreach ($seasonalData as $season)
+                @php
+                $seasons = [1 => 'Winter', 2 => 'Spring', 3 => 'Summer', 4 => 'Autumn'];
+                @endphp
+                @forelse ($seasonalData as $season)
                 <tr>
-                    <td>
-                        @switch($season->season)
-                        @case(1) Winter @break
-                        @case(2) Spring @break
-                        @case(3) Summer @break
-                        @case(4) Autumn @break
-                        @default Unknown
-                        @endswitch
-                    </td>
-                    <td>{{ $season->bookings }}</td>
+                    <td>{{ $seasons[$season['season']] ?? 'Unknown' }}</td>
+                    <td>{{ $season['bookings'] }}</td>
                 </tr>
-                @endforeach
-                @else
+                @empty
                 <tr>
                     <td colspan="2">No data available.</td>
                 </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -86,7 +84,7 @@
 
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: DejaVu Sans, sans-serif;
         margin: 20px;
     }
 
