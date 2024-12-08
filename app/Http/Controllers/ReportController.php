@@ -6,6 +6,7 @@ use App\Jobs\GenerateMonthlyReportJob;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -19,5 +20,20 @@ class ReportController extends Controller
         return response()->json([
             'message' => 'Отчет генерируется. Ожидайте уведомления.',
         ], 202);
+    }
+
+    public function downloadReportFromStorage(string $fileName)
+    {
+        $path = 'reports/' . $fileName;
+
+        if (!Storage::exists($path)) {
+            return response()->json(['error' => 'Отчет не найден'], 404);
+        }
+
+        $fileUrl = Storage::url($path);
+
+        return response()->json([
+            'fileUrl' => $fileUrl,  
+        ]);
     }
 }

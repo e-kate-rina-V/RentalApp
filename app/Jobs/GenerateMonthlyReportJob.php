@@ -30,7 +30,7 @@ class GenerateMonthlyReportJob implements ShouldQueue
         $this->userId = $userId;
     }
 
-    public function handle(): void
+    public function handle()
     {
         $ads = Ad::where('user_id', $this->userId)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
@@ -63,6 +63,8 @@ class GenerateMonthlyReportJob implements ShouldQueue
         ]);
 
         try {
+            ob_start();
+
             $pdf = PDF::loadView('reports.monthly', [
                 'startDate' => $this->startDate,
                 'endDate' => $this->endDate,
@@ -72,10 +74,12 @@ class GenerateMonthlyReportJob implements ShouldQueue
                 'incomeTrend' => $incomeTrend->toArray(),
             ]);
 
-            $pdfContent = $pdf->output();
+            ob_end_clean();
+
             $fileName = 'monthly_report_' . now()->format('Y_m_d_His') . '.pdf';
 
-            Storage::put('reports/' . $fileName, $pdfContent);
+            Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
+
             Log::info('PDF сохранён в: ' . storage_path('app/reports/' . $fileName));
 
             broadcast(new ReportGenerated($fileName, 'Отчет успешно сгенерирован.'));

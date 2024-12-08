@@ -83,8 +83,13 @@
 </html>
 
 <style>
+    /* @font-face {
+    font-family: 'DejaVu Sans';
+    src: url('docker\sources\app\vendor\dompdf\dompdf\lib\fonts\DejaVuSans.ttf') format('truetype');
+} */
+
     body {
-        font-family: DejaVu Sans, sans-serif;
+        font-family: 'Arial', sans-serif;
         margin: 20px;
     }
 

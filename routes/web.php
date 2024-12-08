@@ -55,6 +55,8 @@ Route::post('/reservation', [ReservationController::class, 'store']);
 
 Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
 
+Route::get('/reports/download/{fileName}', [ReportController::class, 'downloadReportFromStorage']);
+
 Route::post('/reviews', [ReviewController::class, 'store']);
 
 // Route::post('/chats', [ChatController::class, 'createChat']);
