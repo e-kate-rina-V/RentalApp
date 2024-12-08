@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Reservation extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    protected $table = 'reservations';
+    
     protected $fillable = [
         'arrival_date',
         'depart_date',
@@ -35,13 +37,13 @@ class Reservation extends Model
         return $this->belongsTo(Ad::class);
     }
 
-    public function getStartDateAttribute($value)
+    public function getArrivalDateAttribute($value)
     {
-        return \Carbon\Carbon::parse($value);
+        return Carbon::parse($value);
     }
 
-    public function getEndDateAttribute($value)
+    public function getDepartDateAttribute($value)
     {
-        return \Carbon\Carbon::parse($value);
+        return Carbon::parse($value);
     }
 }

@@ -6,16 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Message extends Model
+class Review extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'messages';
-    
+    protected $table = 'reviews';
+
     protected $fillable = [
-        'chat_id',
         'user_id',
-        'content',
+        'ad_id',
+        'cleanliness',
+        'staff_work',
+        'location',
+        'value_for_money',
+        'positive',
+        'negative',
+        'comment',
+        'average_rating',
     ];
 
     public function user()
@@ -23,8 +30,8 @@ class Message extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function chat()
+    public function ad()
     {
-        return $this->belongsTo(Chat::class);
+        return $this->belongsTo(Ad::class);
     }
 }

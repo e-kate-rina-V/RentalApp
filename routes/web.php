@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReviewController;
 use App\Models\Ad;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,8 @@ Route::get('/all_ads', [AdController::class, 'index']);
 Route::post('/reservation', [ReservationController::class, 'store']);
 
 Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
+
+Route::post('/reviews', [ReviewController::class, 'store']);
 
 // Route::post('/chats', [ChatController::class, 'createChat']);
 

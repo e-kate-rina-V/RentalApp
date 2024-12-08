@@ -19,18 +19,18 @@ class GenerateMonthlyReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $startDate;
-    private $endDate;
-    private $userId;
+    private string $startDate;
+    private string $endDate;
+    private int $userId;
 
-    public function __construct($startDate, $endDate, $userId)
+    public function __construct(string $startDate, string $endDate, int $userId)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->userId = $userId;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $ads = Ad::where('user_id', $this->userId)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])

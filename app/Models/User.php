@@ -11,9 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-
-    use SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $table = 'users';
     protected $guarded = false;
@@ -48,5 +46,10 @@ class User extends Authenticatable
     public function isPartOfChat($chatId)
     {
         return $this->chats()->where('id', $chatId)->exists();
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

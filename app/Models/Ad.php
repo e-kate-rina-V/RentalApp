@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ad extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'ads';
     protected $fillable = [
@@ -24,7 +23,7 @@ class Ad extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class); 
+        return $this->belongsTo(User::class);
     }
 
     public function conveniences()
@@ -35,5 +34,10 @@ class Ad extends Model
     public function materials()
     {
         return $this->hasMany(Material::class, 'ad_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

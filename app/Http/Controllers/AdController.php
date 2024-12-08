@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Ad;
 use App\Models\Convenience;
 use App\Models\Material;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         try {
             $user = Auth::user();
@@ -32,11 +33,11 @@ class AdController extends Controller
             }
     
             if ($request->has('priceRange') && $request->priceRange != '') {
-                $query->where('price', '<=', $request->priceRange);
+                $query->where('price', '<=',(float) $request->priceRange);
             }
     
             if ($request->has('guestCount') && $request->guestCount != '') {
-                $query->where('guest_count', '>=', $request->guestCount);
+                $query->where('guest_count', '>=', (int) $request->guestCount);
             }
     
             if ($request->has('conveniences')) {
@@ -57,7 +58,7 @@ class AdController extends Controller
         }
     }
 
-    public function ad_register(Request $request)
+    public function ad_register(Request $request): JsonResponse
     {
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -91,8 +92,8 @@ class AdController extends Controller
                 'description' => $request->description,
                 'prem_type' => $request->prem_type,
                 'accom_type' => $request->accom_type,
-                'guest_count' => $request->guest_count,
-                'price' => $request->price,
+                'guest_count' => (int) $request->guest_count,
+                'price' => (float) $request->price,
                 'user_id' => auth()->id(),
             ]);
 
@@ -131,7 +132,7 @@ class AdController extends Controller
         }
     }
 
-    public function show($id)
+    public function show( int $id): JsonResponse
     {
         $ad = Ad::with(['materials', 'conveniences'])->find($id);
 
