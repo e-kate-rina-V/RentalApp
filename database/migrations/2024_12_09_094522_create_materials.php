@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chats', function (Blueprint $table) {
+        Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
+            $table->string('source');
+            $table->foreignId('ad_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chats');
+        Schema::dropIfExists('materials');
     }
 };

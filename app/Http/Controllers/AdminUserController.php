@@ -13,24 +13,6 @@ class AdminUserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    public function create()
-    {
-        // return view('admin.users.create');
-    }
-
-    public function store(Request $request)
-    {
-        // $validated = $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'email' => 'required|email|unique:users,email',
-        //     'password' => 'required|string|min:8|confirmed',
-        // ]);
-
-        // User::create($validated);
-
-        // return redirect()->route('admin.users.index')->with('success', 'Пользователь успешно создан!');
-    }
-
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
@@ -46,16 +28,18 @@ class AdminUserController extends Controller
 
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($request->password);
+        } else {
+            unset($validated['password']);
         }
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Пользователь успешно обновлен!');
+        return redirect()->route('users.index')->with('success', 'Користувач успішно оновлений!');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'Пользователь успешно удален!');
+        return redirect()->route('users.index')->with('success', 'Користувач успішно видалений!');
     }
 }

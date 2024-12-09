@@ -14,36 +14,11 @@ class AdminAdController extends Controller
         return view('admin.ads.index', compact('ads'));
     }
 
-    public function create()
-    {
-        // $users = User::all(); 
-        // return view('admin.ads.create', compact('users'));
-    }
-
-    public function store(Request $request)
-    {
-        // $validated = $request->validate([
-        //     'title' => 'required|string|max:255',
-        //     'prem_type' => 'required|string',
-        //     'accom_type' => 'required|string',
-        //     'guest_count' => 'required|integer|min:1',
-        //     'description' => 'required|string',
-        //     'price' => 'required|numeric|min:0',
-        //     'user_id' => 'required|exists:users,id',
-        // ]);
-
-        // Ad::create($validated);
-
-        // return redirect()->route('admin.ads.index')->with('success', 'Объявление успешно создано!');
-    }
-
     public function edit(Ad $ad)
     {
         $users = User::all();
 
-        dd(route('admin.ads.update', $ad->id));
-         
-        // return view('admin.ads.edit', compact('ad', 'users'));
+        return view('admin.ads.edit', compact('ad', 'users'));
     }
 
     public function update(Request $request, Ad $ad)
@@ -55,17 +30,17 @@ class AdminAdController extends Controller
             'guest_count' => 'required|integer|min:1',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'user_id' => 'required|exists:users,id',
+            'user_email' => 'required|exists:users,email',
         ]);
 
         $ad->update($validated);
 
-        return redirect()->route('admin.ads.index')->with('success', 'Объявление успешно обновлено!');
+        return redirect()->route('ads.index')->with('success', 'Оголошення успішно оновлено!');
     }
 
     public function destroy(Ad $ad)
     {
         $ad->delete();
-        return redirect()->route('admin.ads.index')->with('success', 'Объявление успешно удалено!');
+        return redirect()->route('ads.index')->with('success', 'Оголошення успішно видалено!');
     }
 }

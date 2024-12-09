@@ -19,9 +19,7 @@ return new class extends Migration
             $table->integer('guest_count');
             $table->string('description');
             $table->float('price');
-            $table->unsignedBigInteger('user_id');
-            $table->index('user_id', 'ad_user_idx');
-            $table->foreign('user_id', 'ad_user_fk')->on('users')->references('id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ads');
+        Schema::dropIfExists('table_ads');
     }
 };

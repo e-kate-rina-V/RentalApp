@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('conveniences', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('ad_id');
-            $table->index('ad_id', 'convenience_ad_idx');
-            $table->foreign('ad_id', 'convenience_ad_fk')->on('ads')->references('id');
+            $table->foreignId('ad_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

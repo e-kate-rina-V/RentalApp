@@ -25,12 +25,12 @@ Route::get('/user', function () {
     }
 });
 
+Route::get('/logout/user', [LoginController::class, 'logout']);
+
+
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
-
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
-
-Route::get('/logout/user', [LoginController::class, 'logout']);
 
 Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 

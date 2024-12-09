@@ -8,12 +8,12 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Имя</th>
+            <th>#</th>
+            <th>Ім'я</th>
             <th>Email</th>
             <th>Роль</th>
-            <th>Дата регистрации</th>
-            <th>Действия</th>
+            <th>Дата реєстрації</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>
@@ -25,11 +25,11 @@
             <td>{{ $user->role }}</td>
             <td>{{ $user->created_at->format('d.m.Y') }}</td>
             <td>
-                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Редактировать</a>
+                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Редагувати</a>
                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Видалити оголошення?')">Видалити</button>
                 </form>
             </td>
         </tr>

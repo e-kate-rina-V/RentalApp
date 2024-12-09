@@ -22,7 +22,7 @@ class ReportController extends Controller
         ], 202);
     }
 
-    public function downloadReportFromStorage(string $fileName)
+    public function downloadReportFromStorage(string $fileName): JsonResponse
     {
         $path = 'reports/' . $fileName;
 

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ad_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('arrival_date');
             $table->date('depart_date');
             $table->integer('nights_num');
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->integer('guestBabyCount')->default(0);
             $table->integer('guestPets')->default(0);
             $table->decimal('total_cost', 10, 2);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('status')->default('confirmed');
             $table->timestamps();
             $table->softDeletes();
         });
