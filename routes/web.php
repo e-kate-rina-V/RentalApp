@@ -11,6 +11,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\UserController;
 use App\Models\Ad;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,6 +62,11 @@ Route::get('/reports/download/{fileName}', [ReportController::class, 'downloadRe
 
 Route::post('/reviews', [ReviewController::class, 'store']);
 
+Route::get('/ads/{adId}/reviews', [ReviewController::class, 'show']);
+
+Route::get('/users/{user_id}', [UserController::class, 'show']);
+
+
 Route::post('chats/{adId}', [ChatController::class, 'startChat']);
 
 Route::get('chats/{chatId}/messages', [MessageController::class, 'getMessages']);
@@ -73,8 +79,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('reservations', AdminReservationController::class);
     Route::resource('users', AdminUserController::class);
 });
-
-
 
 
 Auth::routes();

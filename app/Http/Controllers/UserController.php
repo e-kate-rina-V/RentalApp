@@ -15,8 +15,19 @@ class UserController extends Controller
 {
     public function getUser(Request $request): JsonResponse
     {
-       $user = auth()->user();
+        $user = auth()->user();
 
-       return response()->json($user);
+        return response()->json($user);
+    }
+
+    public function show($user_id)
+    {
+        $user = User::find($user_id);
+
+        if ($user) {
+            return response()->json($user);
+        } else {
+            return response()->json(['message' => 'User not found'], 404);
+        }
     }
 }

@@ -18,19 +18,19 @@
         <div class="summary">
             <h2>Summary</h2>
             <ul>
-                <li>Total Listings: {{ $totalAds }}</li>
-                <li>Total Income: ${{ number_format($income, 2) }}</li>
+                <li>Total ads: {{ $totalAds }}</li>
+                <li>Total profit: ${{ number_format($income, 2) }}</li>
             </ul>
         </div>
     </div>
 
     <div class="section">
-        <h2>Income Trend</h2>
+        <h2>Profit trend</h2>
         <table>
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Total Income</th>
+                    <th>Total profit</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,12 +49,12 @@
     </div>
 
     <div class="section">
-        <h2>Seasonal Booking Activity</h2>
+        <h2>Seasonal booking activity</h2>
         <table>
             <thead>
                 <tr>
                     <th>Season</th>
-                    <th>Number of Bookings</th>
+                    <th>Number of bookings</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,10 +83,6 @@
 </html>
 
 <style>
-    /* @font-face {
-    font-family: 'DejaVu Sans';
-    src: url('docker\sources\app\vendor\dompdf\dompdf\lib\fonts\DejaVuSans.ttf') format('truetype');
-} */
 
     body {
         font-family: 'Arial', sans-serif;

@@ -47,4 +47,15 @@ class ReviewController extends Controller
         ]);
         return response()->json(['message' => 'Review submitted successfully', 'review' => $review], 201);
     }
+
+    public function show(Request $request, int $adId): JsonResponse
+    {
+        $reviews = Review::where('ad_id', $adId)->get();
+
+        if ($reviews->isEmpty()) {
+            return response()->json(['message' => 'No reviews found for this ad'], 404);
+        }
+
+        return response()->json($reviews, 200);
+    }
 }
