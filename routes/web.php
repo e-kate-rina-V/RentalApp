@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPdf\Facades\Pdf;
+use Symfony\Component\Mime\MessageConverter;
 
 Route::get('/user', function () {
     if (auth()->check()) {
@@ -59,10 +61,12 @@ Route::get('/reports/download/{fileName}', [ReportController::class, 'downloadRe
 
 Route::post('/reviews', [ReviewController::class, 'store']);
 
-// Route::post('/chats', [ChatController::class, 'createChat']);
+Route::post('chats/{adId}', [ChatController::class, 'startChat']);
 
-// Route::middleware('auth:sanctum')->get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
-// Route::middleware('auth:sanctum')->post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
+Route::get('chats/{chatId}/messages', [MessageController::class, 'getMessages']);
+
+Route::post('chats/{chatId}/messages', [MessageController::class, 'sendMessage']);
+
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('ads', AdminAdController::class);

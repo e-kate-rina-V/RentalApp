@@ -13,17 +13,17 @@ document.getElementById('ad-change').addEventListener('submit', function (event)
 
 
     if (title === '' || title.length <= 4) {
-        document.getElementById('titleError').innerText = 'The title cannot be less than five characters.';
+        document.getElementById('titleError').innerText = 'The title must be at least 5 characters.';
         valid = false;
     }
 
     if (guest_count === '' || guest_count <= 0) {
-        document.getElementById('guestCountError').innerText = 'The number of guests must be at least one.';
+        document.getElementById('guestCountError').innerText = 'The number of guests must be at least 1.';
         valid = false;
     }
 
     if (description === '' || description.length <= 4) {
-        document.getElementById('descriptionError').innerText = 'The description cannot be less than five characters.';
+        document.getElementById('descriptionError').innerText = 'The description must be at least 5 characters.';
         valid = false;
     }
 

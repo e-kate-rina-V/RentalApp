@@ -8,15 +8,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chat extends Model
 {
-    protected $fillable = ['title'];
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'chats';
+
+    protected $fillable = ['user1_id', 'user2_id', 'ad_id'];
 
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
-    public function users()
+    public function user1()
     {
-        return $this->belongsToMany(User::class, 'chat_user');
+        return $this->belongsTo(User::class, 'user1_id');
     }
+
+    public function user2()
+    {
+        return $this->belongsTo(User::class, 'user2_id');
+    }
+
 }

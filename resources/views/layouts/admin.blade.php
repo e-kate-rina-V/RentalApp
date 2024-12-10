@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Административная панель</title>
+    <title>Адміністративна панель</title>
 
     <!-- <link rel="stylesheet" href="{{ asset('css/admin.css') }}"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -17,13 +17,13 @@
             <h2 class="text-center">Admin Panel</h2>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a href="{{ route('ads.index') }}" class="nav-link text-white">Объявления</a>
+                    <a href="{{ route('ads.index') }}" class="nav-link text-white">Оголошення</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('reservations.index') }}" class="nav-link text-white">Бронирования</a>
+                    <a href="{{ route('reservations.index') }}" class="nav-link text-white">Бронювання</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('users.index') }}" class="nav-link text-white">Пользователи</a>
+                    <a href="{{ route('users.index') }}" class="nav-link text-white">Користувачі</a>
                 </li>
                 <!-- <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}">

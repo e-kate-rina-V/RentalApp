@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Chat;
+use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,26 +16,33 @@ class MessageSent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $chat;
     public $message;
 
-    public function __construct($message)
+    public function __construct(Chat $chat, Message $message)
     {
+        $this->chat = $chat;
         $this->message = $message;
     }
-  
-     public function broadcastOn()
+
+    public function broadcastOn()
     {
-        return new PrivateChannel('chat.' . $this->message->chat_id);
+        return new Channel('chat.' . $this->chat->id);
     }
 
-    public function broadcastWith()
+    public function broadcastAs()
     {
-        return [
-            'id' => $this->message->id,
-            'chat_id' => $this->message->chat_id,
-            'user_id' => $this->message->user_id,
-            'content' => $this->message->content,
-            'created_at' => $this->message->created_at->toDateTimeString(),
-        ];
+        return 'message.sent';
     }
+
+    // public function broadcastWith()
+    // {
+    //     return [
+    //         'id' => $this->message->id,
+    //         'chat_id' => $this->message->chat_id,
+    //         'user_id' => $this->message->user_id,
+    //         'content' => $this->message->content,
+    //         'created_at' => $this->message->created_at->toDateTimeString(),
+    //     ];
+    // }
 }

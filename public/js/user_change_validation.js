@@ -12,29 +12,32 @@ document.getElementById('user-change').addEventListener('submit', function (even
     document.getElementById('passwordConfirmationError').innerText = '';
 
     if (name === '') {
-        document.getElementById('nameError').innerText = 'Ім\'я не може бути порожнім.';
+        document.getElementById('nameError').innerText = 'The name cannot be empty.';
         valid = false;
-    } else if (name.length < 3) {
-        document.getElementById('nameError').innerText = 'Ім\'я має бути не менше 3 символів.';
+    } else if (name.length < 2) {
+        document.getElementById('nameError').innerText = 'The name cannot be less than 2 characters.';
         valid = false;
     }
 
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (email === '') {
-        document.getElementById('emailError').innerText = 'Email не може бути порожнім.';
+        document.getElementById('emailError').innerText = 'The email cannot be empty.';
         valid = false;
     } else if (!emailPattern.test(email)) {
-        document.getElementById('emailError').innerText = 'Введіть коректний email.';
+        document.getElementById('emailError').innerText = 'Please input an correct email.';
         valid = false;
     }
 
     if (password !== '' && password.length < 8) {
-        document.getElementById('passwordError').innerText = 'Пароль має бути не менше 8 символів.';
+        document.getElementById('passwordError').innerText = 'The password must contain at least 8 characters';
+        valid = false;
+    } else if (password !== '' && (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password))) {
+        document.getElementById('passwordError').innerText = 'Password must contain at least one letter and one number.'
         valid = false;
     }
 
     if (password !== '' && password !== passwordConfirmation) {
-        document.getElementById('passwordConfirmationError').innerText = 'Паролі не співпадають.';
+        document.getElementById('passwordConfirmationError').innerText = 'Passwords do not match.';
         valid = false;
     }
 
