@@ -19,7 +19,7 @@
             <h2>Summary</h2>
             <ul>
                 <li>Total ads: {{ $totalAds }}</li>
-                <li>Total profit: ${{ number_format($income, 2) }}</li>
+                <li>Total profit: ₴{{ number_format($income, 2) }}</li>
             </ul>
         </div>
     </div>
@@ -30,14 +30,14 @@
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Total profit</th>
+                    <th>Profit</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($incomeTrend as $trend)
                 <tr>
                     <td>{{ $trend['date'] }}</td>
-                    <td>${{ number_format($trend['total_income'], 2) }}</td>
+                    <td>₴{{ number_format($trend['total_income'], 2) }}</td>
                 </tr>
                 @empty
                 <tr>

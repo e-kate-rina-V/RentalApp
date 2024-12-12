@@ -13,12 +13,11 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use App\Models\Ad;
-use Illuminate\Http\Client\Request;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use Spatie\LaravelPdf\Facades\Pdf;
-use Symfony\Component\Mime\MessageConverter;
 
 Route::get('/user', function () {
     if (auth()->check()) {
@@ -30,10 +29,33 @@ Route::get('/user', function () {
 
 Route::get('/logout/user', [LoginController::class, 'logout']);
 
-
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::post('/email/verify-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return response()->json(['message' => 'Verification email sent']);
+})->middleware(['auth:sanctum', 'throttle:6,1']);
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::find($id);
+
+    if (!$user || sha1($user->email) !== $hash) {
+        Log::error("Invalid verification link for user ID: {$id}");
+        return view('auth.verify');
+    }
+
+    $user->markEmailAsVerified();
+
+    return view('auth.verify')->with('status', 'Email has been successfully verified!');
+})->middleware('signed')->name('verification.verify');
+
+
+Route::get('/email/verification-status', function (Request $request) {
+    return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
+})->middleware('auth:sanctum');
+
 
 Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
 
@@ -52,19 +74,23 @@ Route::get('/ads', function () {
 
 Route::get('/ads/{id}', [AdController::class, 'show']);
 
-Route::get('/all_ads', [AdController::class, 'index']);
+Route::get('/users/{user_id}', [UserController::class, 'show']);
 
-Route::post('/reservation', [ReservationController::class, 'store']);
+Route::middleware(['auth:sanctum', 'role:renter'])->get('/all_ads', [AdController::class, 'index']);
 
-Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
+Route::middleware(['auth:sanctum', 'role:renter'])->post('/reservation', [ReservationController::class, 'store']);
 
-Route::get('/reports/download/{fileName}', [ReportController::class, 'downloadReportFromStorage']);
+Route::middleware(['auth:sanctum', 'role:renter'])->get('/ads/{ad}/unavailable-dates', [ReservationController::class, 'getUnavailableDates']);
 
-Route::post('/reviews', [ReviewController::class, 'store']);
+Route::middleware(['auth:sanctum', 'role:renter'])->post('/reviews', [ReviewController::class, 'store']);
 
 Route::get('/ads/{adId}/reviews', [ReviewController::class, 'show']);
 
-Route::get('/users/{user_id}', [UserController::class, 'show']);
+Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
+
+Route::middleware(['auth:sanctum', 'role:landlord'])->get('/reports/download/{fileName}', [ReportController::class, 'downloadReportFromStorage']);
+
+
 
 
 Route::post('chats/{adId}', [ChatController::class, 'startChat']);
@@ -83,4 +109,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

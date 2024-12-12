@@ -80,9 +80,7 @@ class GenerateMonthlyReportJob implements ShouldQueue
 
             Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
 
-            Log::info('PDF сохранён в: ' . storage_path('app/reports/' . $fileName));
-
-            broadcast(new ReportGenerated($fileName, 'Отчет успешно сгенерирован.'));
+            broadcast(new ReportGenerated($fileName, 'Звіт успішно згенерований'));
         } catch (\Exception $e) {
             Log::error('Ошибка при генерации отчета: ' . $e->getMessage());
             Log::error($e->getTraceAsString());

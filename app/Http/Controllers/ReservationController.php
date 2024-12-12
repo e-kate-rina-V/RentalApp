@@ -31,11 +31,25 @@ class ReservationController extends Controller
         ]);
 
         $validated['user_id'] = auth()->id();
-
         $validated['status'] = 'confirmed';
 
+        $overlappingReservations = Reservation::where('ad_id', $validated['ad_id'])
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('arrival_date', [$validated['arrival_date'], $validated['depart_date']])
+                    ->orWhereBetween('depart_date', [$validated['arrival_date'], $validated['depart_date']])
+                    ->orWhere(function ($query) use ($validated) {
+                        $query->where('arrival_date', '<=', $validated['arrival_date'])
+                            ->where('depart_date', '>=', $validated['depart_date']);
+                    });
+            })
+            ->exists();
+
+        if ($overlappingReservations) {
+            return response()->json(['error' => 'The selected dates are unavailable'], 422);
+        }
+
         try {
-            $reservation = Reservation::with(['user', 'ad'])->create($validated);
+            $reservation = Reservation::create($validated);
 
             Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
 
@@ -50,6 +64,22 @@ class ReservationController extends Controller
 
             return response()->json([
                 'error' => 'Failed to create reservation',
+            ], 500);
+        }
+    }
+
+    public function getUnavailableDates($adId): JsonResponse
+    {
+        try {
+            $reservations = Reservation::where('ad_id', $adId)
+                ->select('arrival_date', 'depart_date')
+                ->get();
+
+            return response()->json($reservations);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch unavailable dates',
+                'message' => $e->getMessage()
             ], 500);
         }
     }

@@ -21,25 +21,25 @@ class AdController extends Controller
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
-    
+
             $query = Ad::with(['materials', 'conveniences']);
-    
+
             if ($request->has('premType') && $request->premType != '') {
                 $query->where('prem_type', $request->premType);
             }
-    
+
             if ($request->has('accomType') && $request->accomType != '') {
                 $query->where('accom_type', $request->accomType);
             }
-    
+
             if ($request->has('priceRange') && $request->priceRange != '') {
-                $query->where('price', '<=',(float) $request->priceRange);
+                $query->where('price', '<=', (float) $request->priceRange);
             }
-    
+
             if ($request->has('guestCount') && $request->guestCount != '') {
                 $query->where('guest_count', '>=', (int) $request->guestCount);
             }
-    
+
             if ($request->has('conveniences')) {
                 foreach ($request->conveniences as $convenience => $value) {
                     if ($value) {
@@ -49,9 +49,9 @@ class AdController extends Controller
                     }
                 }
             }
-    
-            $ads = $query->paginate(5); 
-    
+
+            $ads = $query->paginate(10);
+
             return response()->json($ads);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Ошибка при получении объявлений.'], 500);
@@ -74,7 +74,7 @@ class AdController extends Controller
             'conven' => 'array',
             'conven.*' => 'string|max:255',
             'materials' => 'array',
-            'materials.*' => 'file|mimes:jpeg,png,jpg,mp4,mov|max:2048',
+            'materials.*' => 'file|mimes:jpeg,png,jpg,avif,mp4,mov|max:2048',
         ]);
 
         if ($validateAd->fails()) {
@@ -132,7 +132,7 @@ class AdController extends Controller
         }
     }
 
-    public function show( int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $ad = Ad::with(['materials', 'conveniences'])->find($id);
 

@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailVerification;
+
 
 use function Laravel\Prompts\text;
 
@@ -37,10 +40,15 @@ class RegisterController extends Controller
                 'role' => $request->role,
             ]);
 
-            event(new Registered($user));
+            $verificationUrl = URL::signedRoute('verification.verify', [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->email),
+            ]);
+
+            Mail::to($user->email)->send(new EmailVerification($verificationUrl));
 
             return response()->json([
-                'message' => 'Registration successful',
+                'message' => 'Registration successful. Verification email sent.',
                 'user' => $user,
             ], 201);
         } catch (\Exception $e) {
