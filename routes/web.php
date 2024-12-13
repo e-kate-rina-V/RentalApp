@@ -92,12 +92,13 @@ Route::middleware(['auth:sanctum', 'role:landlord'])->get('/reports/download/{fi
 
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/chats/{adId}/start', [ChatController::class, 'startChat']);
+    Route::get('/chats', [ChatController::class, 'getUserChats']);
 
-Route::post('chats/{adId}', [ChatController::class, 'startChat']);
-
-Route::get('chats/{chatId}/messages', [MessageController::class, 'getMessages']);
-
-Route::post('chats/{chatId}/messages', [MessageController::class, 'sendMessage']);
+    Route::get('/chats/{chatId}/messages', [MessageController::class, 'getMessages']);
+    Route::post('/chats/{chatId}/messages', [MessageController::class, 'sendMessage']);
+});
 
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

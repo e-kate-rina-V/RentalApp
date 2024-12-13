@@ -13,9 +13,33 @@ class MessageController extends Controller
 {
     public function getMessages($chatId)
     {
-        $chat = Chat::findOrFail($chatId);
-        return response()->json(['messages' => $chat->messages]);
+        $chat = Chat::where('id', $chatId)
+                    ->where(function ($query) {
+                        $query->where('user1_id', auth()->id())
+                              ->orWhere('user2_id', auth()->id());
+                    })
+                    ->with(['messages.user', 'ad'])  
+                    ->firstOrFail();
+
+        $chatTitle = $chat->ad->title;  
+
+        $messages = $chat->messages->map(function ($message) {
+            return [
+                'id' => $message->id,
+                'user_id' => $message->user_id,
+                'user_name' => $message->user->name, 
+                'message' => $message->message,
+            ];
+        });
+    
+        return response()->json([
+            'current_user_id' => auth()->id(),
+            'chat_id' => $chat->id,
+            'chat_title' => $chatTitle,  
+            'messages' => $messages,
+        ]);
     }
+    
 
     public function sendMessage(Request $request, $chatId)
     {
@@ -23,8 +47,13 @@ class MessageController extends Controller
             'message' => 'required|string',
         ]);
 
-        $chat = Chat::findOrFail($chatId);
+        $chat = Chat::where(function ($query) {
+            $query->where('user1_id', auth()->id())
+                ->orWhere('user2_id', auth()->id());
+        })->findOrFail($chatId);
+
         $userId = auth()->id();
+        $userName = auth()->user()->name;
 
         $message = Message::create([
             'chat_id' => $chatId,
@@ -34,8 +63,19 @@ class MessageController extends Controller
 
         broadcast(new MessageSent($chat, $message));
 
-        $messages = $chat->messages; 
+        $messages = $chat->messages->map(function ($message) use ($userName) {
+            return [
+                'id' => $message->id,
+                'user_id' => $message->user_id,
+                'user_name' => $message->user->name,
+                'message' => $message->message,
+            ];
+        });
 
-        return response()->json(['messages' => $messages]); 
+        return response()->json([
+            'user_id' => $userId,
+            'user_name' => $userName,
+            'messages' => $messages,
+        ]);
     }
 }

@@ -6,13 +6,12 @@ use App\Models\Chat;
 use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent
+class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -27,7 +26,7 @@ class MessageSent
 
     public function broadcastOn()
     {
-        return new Channel('chat.' . $this->chat->id);
+        return new PrivateChannel('chat.' . $this->chat->id);
     }
 
     public function broadcastAs()
@@ -35,14 +34,16 @@ class MessageSent
         return 'message.sent';
     }
 
-    // public function broadcastWith()
-    // {
-    //     return [
-    //         'id' => $this->message->id,
-    //         'chat_id' => $this->message->chat_id,
-    //         'user_id' => $this->message->user_id,
-    //         'content' => $this->message->content,
-    //         'created_at' => $this->message->created_at->toDateTimeString(),
-    //     ];
-    // }
+    public function broadcastWith()
+    {
+        return [
+            'chat_id' => $this->chat->id,
+            'message' => [
+                'id' => $this->message->id,
+                'user_id' => $this->message->user_id,
+                'message' => $this->message->message,
+                'created_at' => $this->message->created_at->toDateTimeString(),
+            ],
+        ];
+    }
 }

@@ -15,25 +15,31 @@ class ChatController extends Controller
         $ad = Ad::findOrFail($adId);
 
         $tenantUserId = auth()->id();
-
         $ownerUserId = $ad->user_id;
 
-        $chat = Chat::where(function ($query) use ($tenantUserId, $ownerUserId) {
-            $query->where('user1_id', $tenantUserId)
-                ->where('user2_id', $ownerUserId);
-        })->orWhere(function ($query) use ($tenantUserId, $ownerUserId) {
-            $query->where('user1_id', $ownerUserId)
-                ->where('user2_id', $tenantUserId);
-        })->first();
-
-        if (!$chat) {
-            $chat = Chat::create([
-                'user1_id' => $tenantUserId,
-                'user2_id' => $ownerUserId,
-                'ad_id' => $ad->id,
-            ]);
+        if ($tenantUserId === $ownerUserId) {
+            return response()->json(['error' => 'You cannot start a chat with yourself.'], 400);
         }
 
+        $chat = Chat::firstOrCreate(
+            [
+                'user1_id' => min($tenantUserId, $ownerUserId),
+                'user2_id' => max($tenantUserId, $ownerUserId),
+                'ad_id' => $ad->id,
+            ]
+        );
+
         return response()->json(['chat_id' => $chat->id]);
+    }
+
+
+    public function getUserChats()
+    {
+        $userId = auth()->id();
+        $chats = Chat::where('user1_id', $userId)
+            ->orWhere('user2_id', $userId)
+            ->with(['user1', 'user2', 'ad'])
+            ->get();
+        return response()->json(['current_user_id' => $userId, 'chats' => $chats]);
     }
 }
