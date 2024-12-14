@@ -4,28 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MainPage</title>
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 </head>
 
 <body>
-    <ul>
-        @guest()
-        <li> <a href="{{route('login')}}">Логін</a></li>
-        <li> <a href="{{route('register')}}">Реєстрація</a></li>
-        @endguest
-
-        @auth()
-        <li>
-            <a href="{{route('logout')}}"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                Logout
-            </a>
-            <form id="logout-form" action="{{route('logout')}}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </li>
-        @endauth
-    </ul>
+    <div class="home-page">
+        <ul>
+            @guest()
+            <li><button id="home-page-btn"  class="btn btn-primary"><a href="{{route('login.admin')}}">Увійти</a></button></li>
+            @endguest
+        </ul>
+    </div>
 </body>
 
 </html>

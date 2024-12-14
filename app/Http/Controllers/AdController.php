@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function showAllAds(Request $request): JsonResponse
     {
         try {
             $user = Auth::user();
@@ -58,7 +58,7 @@ class AdController extends Controller
         }
     }
 
-    public function ad_register(Request $request): JsonResponse
+    public function registerAd(Request $request): JsonResponse
     {
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -132,7 +132,7 @@ class AdController extends Controller
         }
     }
 
-    public function show(int $id): JsonResponse
+    public function showAdById(int $id): JsonResponse
     {
         $ad = Ad::with(['materials', 'conveniences'])->find($id);
 
@@ -141,5 +141,19 @@ class AdController extends Controller
         }
 
         return response()->json($ad, 200);
+    }
+
+    public function showUserAds(): JsonResponse
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $ads = Ad::where('user_id', $user->id)
+            ->with('materials')
+            ->paginate(2);
+
+        return response()->json($ads);
     }
 }

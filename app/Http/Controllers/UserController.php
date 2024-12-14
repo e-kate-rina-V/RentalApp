@@ -5,11 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -20,7 +15,7 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function show($user_id)
+    public function showUser($user_id): JsonResponse
     {
         $user = User::find($user_id);
 

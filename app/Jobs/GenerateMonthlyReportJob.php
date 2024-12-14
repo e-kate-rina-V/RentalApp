@@ -12,7 +12,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Log;
 
 class GenerateMonthlyReportJob implements ShouldQueue
@@ -42,10 +41,18 @@ class GenerateMonthlyReportJob implements ShouldQueue
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->sum('total_cost');
 
-        $seasonalData = Reservation::selectRaw('QUARTER(arrival_date) as season, COUNT(*) as bookings')
+        $seasonalData = Reservation::selectRaw("
+            CASE
+                WHEN MONTH(arrival_date) IN (12, 1, 2) THEN 'Winter'
+                WHEN MONTH(arrival_date) IN (3, 4, 5) THEN 'Spring'
+                WHEN MONTH(arrival_date) IN (6, 7, 8) THEN 'Summer'
+                WHEN MONTH(arrival_date) IN (9, 10, 11) THEN 'Autumn'
+            END as season, COUNT(*) as bookings
+        ")
             ->whereIn('ad_id', $ads->pluck('id'))
             ->groupBy('season')
             ->get();
+
 
         $incomeTrend = Reservation::selectRaw('DATE(created_at) as date, SUM(total_cost) as total_income')
             ->whereIn('ad_id', $ads->pluck('id'))

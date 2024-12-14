@@ -7,11 +7,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Адміністративна панель</title>
 
-    <!-- <link rel="stylesheet" href="{{ asset('css/admin.css') }}"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 </head>
 
-<body>
+<body id="admin-panel-body">
     <div id="app" class="d-flex">
         <nav class="bg-dark text-white p-3" style="min-width: 200px;">
             <h2 class="text-center">Admin Panel</h2>
@@ -25,12 +25,12 @@
                 <li class="nav-item">
                     <a href="{{ route('users.index') }}" class="nav-link text-white">Користувачі</a>
                 </li>
-                <!-- <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}">
+                <li class="nav-item">
+                    <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
-                        <button type="submit" class="btn btn-link text-white">Выйти</button>
+                        <button id="admin-exit-btn" type="submit" class="btn btn-link text-white">Вийти</button>
                     </form>
-                </li> -->
+                </li>
             </ul>
         </nav>
 
@@ -51,26 +51,6 @@
             </div>
         </main>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="{{ asset('js/validation.js') }}"></script> -->
 </body>
 
 </html>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    .nav-link {
-        margin-bottom: 10px;
-        display: block;
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .nav-link:hover {
-        background-color: #495057;
-    }
-</style>

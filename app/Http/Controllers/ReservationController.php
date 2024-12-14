@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function createReservation(Request $request): JsonResponse
     {
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);

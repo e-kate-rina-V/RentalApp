@@ -8,9 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -35,17 +33,15 @@ class LoginController extends Controller
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
 
-
     public function logout(Request $request): JsonResponse
     {
-        Auth::logout();  
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return response()->json(['message' => 'Logout successful'], 200);
-
     }
-    
+
     use AuthenticatesUsers;
 
     public function __construct()
@@ -53,4 +49,23 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    public function loginAdmin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            return redirect()->intended('/admin/ads');
+        }
+
+        return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+    }
+
 }

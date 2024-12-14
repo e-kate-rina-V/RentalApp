@@ -18,10 +18,6 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-// Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
-//     return $user->isPartOfChat($chatId);
-// });
-
 Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
     return Chat::where('id', $chatId)
                ->where(function ($query) use ($user) {

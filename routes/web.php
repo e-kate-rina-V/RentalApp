@@ -27,79 +27,83 @@ Route::get('/user', function () {
     }
 });
 
-Route::get('/logout/user', [LoginController::class, 'logout']);
+Route::get('/home', function () {
+    return view('mainpage');
+})->name('home');
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::post('/email/verify-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return response()->json(['message' => 'Verification email sent']);
-})->middleware(['auth:sanctum', 'throttle:6,1']);
+Route::prefix('email')->group(function () {
+    Route::post('/verify-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Verification email sent']);
+    })->middleware(['auth:sanctum', 'throttle:6,1']);
 
-Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    $user = User::find($id);
+    Route::get('/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+        $user = User::find($id);
 
-    if (!$user || sha1($user->email) !== $hash) {
-        Log::error("Invalid verification link for user ID: {$id}");
-        return view('auth.verify');
-    }
+        if (!$user || sha1($user->email) !== $hash) {
+            Log::error("Invalid verification link for user ID: {$id}");
+            return view('auth.verify');
+        }
 
-    $user->markEmailAsVerified();
+        $user->markEmailAsVerified();
 
-    return view('auth.verify')->with('status', 'Email has been successfully verified!');
-})->middleware('signed')->name('verification.verify');
-
-
-Route::get('/email/verification-status', function (Request $request) {
-    return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
-})->middleware('auth:sanctum');
+        return view('auth.verify')->with('status', 'Email has been successfully verified!');
+    })->middleware('signed')->name('verification.verify');
 
 
-Route::post('ad_register', [AdController::class, 'ad_register'])->name('ads.ad_register');
-
-Route::get('/ads', function () {
-    $user = Auth::user();
-    if (!$user) {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
-
-    $ads = Ad::where('user_id', $user->id)
-        ->with('materials')
-        ->paginate(2);
-
-    return response()->json($ads);
+    Route::get('/verification-status', function (Request $request) {
+        return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
+    })->middleware('auth:sanctum');
 });
 
-Route::get('/ads/{id}', [AdController::class, 'show']);
 
-Route::get('/users/{user_id}', [UserController::class, 'show']);
+Route::prefix('ads')->group(function () {
+    Route::post('register', [AdController::class, 'registerAd']);
 
-Route::middleware(['auth:sanctum', 'role:renter'])->get('/all_ads', [AdController::class, 'index']);
+    Route::get('/', [AdController::class, 'showUserAds']);
 
-Route::middleware(['auth:sanctum', 'role:renter'])->post('/reservation', [ReservationController::class, 'store']);
+    Route::get('/{id}', [AdController::class, 'showAdById']);
 
-Route::middleware(['auth:sanctum', 'role:renter'])->get('/ads/{ad}/unavailable-dates', [ReservationController::class, 'getUnavailableDates']);
+    Route::get('/{ad}/unavailable-dates', [ReservationController::class, 'getUnavailableDates']);
 
-Route::middleware(['auth:sanctum', 'role:renter'])->post('/reviews', [ReviewController::class, 'store']);
+    Route::get('/{adId}/reviews', [ReviewController::class, 'showReviews']);
+});
 
-Route::get('/ads/{adId}/reviews', [ReviewController::class, 'show']);
+Route::middleware(['auth:sanctum', 'role:renter'])->get('all_ads', [AdController::class, 'showAllAds']);
+
+Route::middleware(['auth:sanctum', 'role:renter'])->post('/reservation', [ReservationController::class, 'createReservation']);
+
+Route::middleware(['auth:sanctum', 'role:renter'])->post('/reviews', [ReviewController::class, 'createReview']);
+
+
+Route::middleware('auth:sanctum')->prefix('chats')->group(function () {
+    Route::post('/{adId}/start', [ChatController::class, 'startChat']);
+    Route::get('/', [ChatController::class, 'getUserChats']);
+
+    Route::get('/{chatId}/messages', [MessageController::class, 'getMessages']);
+    Route::post('/{chatId}/messages', [MessageController::class, 'sendMessage']);
+});
+
+
+Route::get('/users/{user_id}', [UserController::class, 'showUser']);
 
 Route::middleware('auth:api')->post('/generate-report', [ReportController::class, 'generateReport']);
 
 Route::middleware(['auth:sanctum', 'role:landlord'])->get('/reports/download/{fileName}', [ReportController::class, 'downloadReportFromStorage']);
 
 
+Route::get('login/admin', function () {
+    return view('auth.login');
+})->name('login.admin');;
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/chats/{adId}/start', [ChatController::class, 'startChat']);
-    Route::get('/chats', [ChatController::class, 'getUserChats']);
-
-    Route::get('/chats/{chatId}/messages', [MessageController::class, 'getMessages']);
-    Route::post('/chats/{chatId}/messages', [MessageController::class, 'sendMessage']);
+Route::prefix('admin')->group(function () {
+    Route::post('login', [LoginController::class, 'loginAdmin'])->name('admin.login');
+    Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
 });
-
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('ads', AdminAdController::class);
@@ -109,4 +113,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
 Auth::routes();
-

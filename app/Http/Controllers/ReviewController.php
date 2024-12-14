@@ -13,7 +13,7 @@ class ReviewController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function store(Request $request): JsonResponse
+    public function createReview(Request $request): JsonResponse
     {
         if (!auth()->check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -48,7 +48,7 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review submitted successfully', 'review' => $review], 201);
     }
 
-    public function show(Request $request, int $adId): JsonResponse
+    public function showReviews(Request $request, int $adId): JsonResponse
     {
         $reviews = Review::where('ad_id', $adId)->get();
 

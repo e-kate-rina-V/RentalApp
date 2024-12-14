@@ -7,7 +7,7 @@
     <title>Monthly Report</title>
 </head>
 
-<body>
+<body id="report-body">
     <div class="header">
         <h1>Monthly Report</h1>
         <p>Period: {{ $startDate }} - {{ $endDate }}</p>
@@ -59,7 +59,7 @@
             </thead>
             <tbody>
                 @php
-                $seasons = [1 => 'Winter', 2 => 'Spring', 3 => 'Summer', 4 => 'Autumn'];
+                $seasons = ['Winter' => 'Winter', 'Spring' => 'Spring', 'Summer' => 'Summer', 'Autumn' => 'Autumn'];
                 @endphp
                 @forelse ($seasonalData as $season)
                 <tr>
@@ -83,9 +83,8 @@
 </html>
 
 <style>
-
-    body {
-        font-family: 'Arial', sans-serif;
+    #report-body {
+        font-family: 'DejaVu Sans', 'Segoe UI', Arial, sans-serif;
         margin: 20px;
     }
 
