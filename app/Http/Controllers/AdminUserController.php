@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminUserUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -10,6 +11,7 @@ class AdminUserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -18,13 +20,9 @@ class AdminUserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(AdminUserUpdateRequest $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
+       $validated = $request->validated();
 
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($request->password);
@@ -40,6 +38,7 @@ class AdminUserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+        
         return redirect()->route('users.index')->with('success', 'Користувач успішно видалений!');
     }
 }

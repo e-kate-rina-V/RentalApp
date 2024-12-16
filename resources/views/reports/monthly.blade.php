@@ -58,12 +58,9 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                $seasons = ['Winter' => 'Winter', 'Spring' => 'Spring', 'Summer' => 'Summer', 'Autumn' => 'Autumn'];
-                @endphp
                 @forelse ($seasonalData as $season)
                 <tr>
-                    <td>{{ $seasons[$season['season']] ?? 'Unknown' }}</td>
+                    <td>{{ $season['season'] }}</td>
                     <td>{{ $season['bookings'] }}</td>
                 </tr>
                 @empty

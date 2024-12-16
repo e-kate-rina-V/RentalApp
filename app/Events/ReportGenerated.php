@@ -12,10 +12,7 @@ class ReportGenerated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public string $fileName;
-    public string $message;
-
-    public function __construct(string $fileName, string $message)
+    public function __construct(public string $fileName, public string $message)
     {
         $this->fileName = $fileName;
         $this->message = $message;

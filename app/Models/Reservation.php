@@ -12,6 +12,10 @@ class Reservation extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'reservations';
+
+    protected $casts = [
+        'arrival_date' => 'datetime',
+    ];
     
     protected $fillable = [
         'arrival_date',

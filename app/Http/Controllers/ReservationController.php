@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateReservationRequest;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 
@@ -12,23 +13,9 @@ use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
 {
-    public function createReservation(Request $request): JsonResponse
+    public function createReservation(CreateReservationRequest $request): JsonResponse
     {
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $validated = $request->validate([
-            'arrival_date' => 'required|date',
-            'depart_date' => 'required|date|after:arrival_date',
-            'nights_num' => 'required|integer|min:1',
-            'guestAdultCount' => 'required|integer|min:1',
-            'guestChildrenCount' => 'nullable|integer|min:0',
-            'guestBabyCount' => 'nullable|integer|min:0',
-            'guestPets' => 'nullable|integer|min:0',
-            'ad_id' => 'required|exists:ads,id',
-            'total_cost' => 'required|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $validated['user_id'] = auth()->id();
         $validated['status'] = 'confirmed';
@@ -48,39 +35,26 @@ class ReservationController extends Controller
             return response()->json(['error' => 'The selected dates are unavailable'], 422);
         }
 
-        try {
-            $reservation = Reservation::create($validated);
 
-            Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
+        $reservation = Reservation::create($validated);
 
-            Log::info('Mail sent successfully to: ' . auth()->user()->email);
+        Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
 
-            return response()->json([
-                'message' => 'Reservation created successfully',
-                'reservation' => $reservation,
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Error creating reservation: ' . $e->getMessage());
+        Log::info('Mail sent successfully to: ' . auth()->user()->email);
 
-            return response()->json([
-                'error' => 'Failed to create reservation',
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Reservation created successfully',
+            'reservation' => $reservation,
+        ], 201);
     }
+
 
     public function getUnavailableDates($adId): JsonResponse
     {
-        try {
-            $reservations = Reservation::where('ad_id', $adId)
-                ->select('arrival_date', 'depart_date')
-                ->get();
+        $reservations = Reservation::where('ad_id', $adId)
+            ->select('arrival_date', 'depart_date')
+            ->get();
 
-            return response()->json($reservations);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch unavailable dates',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json($reservations);
     }
 }

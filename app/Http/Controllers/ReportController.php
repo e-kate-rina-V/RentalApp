@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
-    public function generateReport(Request $request): JsonResponse
+    public function generateReport(): JsonResponse
     {
         $startDate = now()->startOfMonth()->toDateString();
         $endDate = now()->endOfMonth()->toDateString();

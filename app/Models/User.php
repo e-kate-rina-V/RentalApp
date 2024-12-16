@@ -18,7 +18,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $table = 'users';
     protected $guarded = false;
 
-
     protected $fillable = [
         'name',
         'email',
@@ -54,4 +53,29 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Review::class);
     }
+
+    public static function getList()
+    {
+        return self::select('id', 'email')->get();  
+    }
+
+    // public function roles()
+    // {
+    //     return $this->belongsToMany(Role::class);
+    // }
+
+    // public function hasRole($role)
+    // {
+    //     return $this->roles->pluck('name')->contains($role);
+    // }
+
+    // public function hasPermission($permission)
+    // {
+    //     foreach ($this->roles as $role) {
+    //         if ($role->permissions->pluck('name')->contains($permission)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 }

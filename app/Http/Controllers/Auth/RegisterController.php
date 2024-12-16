@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
@@ -14,48 +15,32 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailVerification;
 
-
-use function Laravel\Prompts\text;
-
 class RegisterController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:renter,landlord',
+        $user = new User();
+        $user->fill([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+        $user->save();
+
+        $verificationUrl = URL::signedRoute('verification.verify', [
+            'id' => $user->getKey(),
+            'hash' => sha1($user->email),
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        Mail::to($user->email)->send(new EmailVerification($verificationUrl));
 
-        try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => $request->role,
-            ]);
-
-            $verificationUrl = URL::signedRoute('verification.verify', [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->email),
-            ]);
-
-            Mail::to($user->email)->send(new EmailVerification($verificationUrl));
-
-            return response()->json([
-                'message' => 'Registration successful. Verification email sent.',
-                'user' => $user,
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Error during registration', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        return response()->json([
+            'message' => 'Registration successful. Verification email sent.',
+            'user' => $user,
+        ], 201);
     }
+
 
     use RegistersUsers;
 

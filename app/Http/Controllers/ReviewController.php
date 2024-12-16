@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateReviewRequest;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,27 +14,14 @@ class ReviewController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function createReview(Request $request): JsonResponse
+    public function createReview(CreateReviewRequest $request): JsonResponse
     {
-        if (!auth()->check()) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        $validated = $request->validate([
-            'adId' => 'required|integer|exists:ads,id',
-            'ratings.cleanliness' => 'required|integer|min:0|max:5',
-            'ratings.staffWork' => 'required|integer|min:0|max:5',
-            'ratings.location' => 'required|integer|min:0|max:5',
-            'ratings.valueForMoney' => 'required|integer|min:0|max:5',
-            'reviews.positive' => 'nullable|string|max:500',
-            'reviews.negative' => 'nullable|string|max:500',
-            'reviews.comment' => 'nullable|string|max:1000',
-            'averageRating' => 'required|numeric|min:0|max:5',
-        ]);
+        $validated = $request->validated();
 
         $userId = auth()->id();
 
-        $review = Review::create([
+        $review = new Review();
+        $review->fill([
             'user_id' => $userId,
             'ad_id' => $validated['adId'],
             'cleanliness' => $validated['ratings']['cleanliness'],
@@ -45,15 +33,18 @@ class ReviewController extends Controller
             'comment' => $validated['reviews']['comment'] ?? null,
             'average_rating' => $validated['averageRating'],
         ]);
-        return response()->json(['message' => 'Review submitted successfully', 'review' => $review], 201);
+
+        $review->save();
+
+        return response()->json(['message' => 'Отзыв успешно отправлен', 'review' => $review], 201);
     }
 
-    public function showReviews(Request $request, int $adId): JsonResponse
+    public function showReviews(int $adId): JsonResponse
     {
         $reviews = Review::where('ad_id', $adId)->get();
 
         if ($reviews->isEmpty()) {
-            return response()->json(['message' => 'No reviews found for this ad'], 404);
+            return response()->json(['message' => 'Отзывов для этого объявления не найдено'], 404);
         }
 
         return response()->json($reviews, 200);

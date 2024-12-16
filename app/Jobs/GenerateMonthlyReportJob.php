@@ -18,11 +18,7 @@ class GenerateMonthlyReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private string $startDate;
-    private string $endDate;
-    private int $userId;
-
-    public function __construct(string $startDate, string $endDate, int $userId)
+    public function __construct(private string $startDate, private string $endDate, private int $userId)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -31,35 +27,41 @@ class GenerateMonthlyReportJob implements ShouldQueue
 
     public function handle()
     {
-        $ads = Ad::where('user_id', $this->userId)
+        $adIds = Ad::where('user_id', $this->userId)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
-            ->get();
-
-        $totalAds = $ads->count();
-
-        $income = Reservation::whereIn('ad_id', $ads->pluck('id'))
+            ->pluck('id') 
+            ->toArray(); 
+    
+        $totalAds = count($adIds); 
+    
+        $income = Reservation::whereIn('ad_id', $adIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->sum('total_cost');
-
-        $seasonalData = Reservation::selectRaw("
-            CASE
-                WHEN MONTH(arrival_date) IN (12, 1, 2) THEN 'Winter'
-                WHEN MONTH(arrival_date) IN (3, 4, 5) THEN 'Spring'
-                WHEN MONTH(arrival_date) IN (6, 7, 8) THEN 'Summer'
-                WHEN MONTH(arrival_date) IN (9, 10, 11) THEN 'Autumn'
-            END as season, COUNT(*) as bookings
-        ")
-            ->whereIn('ad_id', $ads->pluck('id'))
-            ->groupBy('season')
-            ->get();
-
+    
+        $seasonalData = Reservation::whereIn('ad_id', $adIds)
+            ->get()
+            ->groupBy(function ($reservation) {
+                $month = $reservation->arrival_date?->month;
+                return match (true) {
+                    $month && in_array($month, [12, 1, 2]) => 'Winter',
+                    $month && in_array($month, [3, 4, 5]) => 'Spring',
+                    $month && in_array($month, [6, 7, 8]) => 'Summer',
+                    $month && in_array($month, [9, 10, 11]) => 'Autumn',
+                    default => 'Unknown',
+                };
+            })
+            ->map(fn($group, $season) => [
+                'season' => $season,
+                'bookings' => $group->count(),
+            ])
+            ->values();
 
         $incomeTrend = Reservation::selectRaw('DATE(created_at) as date, SUM(total_cost) as total_income')
-            ->whereIn('ad_id', $ads->pluck('id'))
+            ->whereIn('ad_id', $adIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->groupBy('date')
             ->get();
-
+    
         Log::info('PDF Data:', [
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
@@ -68,10 +70,10 @@ class GenerateMonthlyReportJob implements ShouldQueue
             'seasonalData' => $seasonalData,
             'incomeTrend' => $incomeTrend,
         ]);
-
+    
         try {
             ob_start();
-
+    
             $pdf = PDF::loadView('reports.monthly', [
                 'startDate' => $this->startDate,
                 'endDate' => $this->endDate,
@@ -80,17 +82,17 @@ class GenerateMonthlyReportJob implements ShouldQueue
                 'seasonalData' => $seasonalData->toArray(),
                 'incomeTrend' => $incomeTrend->toArray(),
             ]);
-
             ob_end_clean();
-
+    
             $fileName = 'monthly_report_' . now()->format('Y_m_d_His') . '.pdf';
-
+    
             Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
-
+    
             broadcast(new ReportGenerated($fileName, 'Звіт успішно згенерований'));
         } catch (\Exception $e) {
             Log::error('Ошибка при генерации отчета: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
         }
     }
+    
 }

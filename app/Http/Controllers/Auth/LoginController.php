@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
@@ -12,15 +13,12 @@ use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8',
-        ]);
+        $validated = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if (!$validated) {
+            return response()->json(['error' => 'Validation failed'], 422);
         }
 
         if (Auth::attempt($request->only('email', 'password'))) {
@@ -32,6 +30,7 @@ class LoginController extends Controller
 
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
+
 
     public function logout(Request $request): JsonResponse
     {
@@ -67,5 +66,4 @@ class LoginController extends Controller
 
         return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
-
 }

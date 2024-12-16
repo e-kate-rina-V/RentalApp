@@ -40,6 +40,7 @@ class ChatController extends Controller
             ->orWhere('user2_id', $userId)
             ->with(['user1', 'user2', 'ad'])
             ->get();
+            
         return response()->json(['current_user_id' => $userId, 'chats' => $chats]);
     }
 }
