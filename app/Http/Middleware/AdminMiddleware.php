@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return $next($request);
-        }
+    // public function handle(Request $request, Closure $next): Response
+    // {
+    //     if (Auth::check() && Auth::user()->role === 'admin') {
+    //         return $next($request);
+    //     }
 
-        return redirect('/')->with('error', 'Access denied');
-    }
+    //     return redirect('/')->with('error', 'Access denied');
+    // }
 }

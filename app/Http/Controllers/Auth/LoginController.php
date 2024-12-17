@@ -21,10 +21,16 @@ class LoginController extends Controller
             return response()->json(['error' => 'Validation failed'], 422);
         }
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $role = $user->getRoleNames()->first();  
+
             return response()->json([
                 'message' => 'Login successful',
-                'user' => Auth::user()
+                'user' => $user,
+                'role' => $role,
             ]);
         }
 

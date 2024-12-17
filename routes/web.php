@@ -29,6 +29,9 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('register', 'register');
 });
 
+Route::get('logout', [LoginController::class, 'logout']);
+
+
 Route::controller(LoginController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('logout', 'logout')->middleware('auth:sanctum');
@@ -60,7 +63,6 @@ Route::prefix('email')->group(function () {
     })->middleware('auth:sanctum');
 });
 
-
 Route::prefix('ads')->group(function () {
     Route::controller(AdController::class)->group(function () {
         Route::post('register', 'registerAd');
@@ -71,11 +73,10 @@ Route::prefix('ads')->group(function () {
     Route::get('/{adId}/reviews', [ReviewController::class, 'showReviews']);
 });
 
-Route::middleware(['auth:sanctum', 'role:renter'])->group(function () {
-    Route::get('all_ads', [AdController::class, 'showAllAds']);
-    Route::post('reservation', [ReservationController::class, 'createReservation']);
-    Route::post('reviews', [ReviewController::class, 'createReview']);
-});
+Route::get('all_ads', [AdController::class, 'showAllAds']);
+Route::post('reservation', [ReservationController::class, 'createReservation']);
+Route::post('reviews', [ReviewController::class, 'createReview']);
+
 
 Route::controller(ChatController::class)->group(function () {
     Route::middleware('auth:sanctum')->prefix('chats')->group(function () {
@@ -105,7 +106,7 @@ Route::controller(LoginController::class)->group(function () {
     });
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('ads', AdminAdController::class);
     Route::resource('reservations', AdminReservationController::class);
     Route::resource('users', AdminUserController::class);

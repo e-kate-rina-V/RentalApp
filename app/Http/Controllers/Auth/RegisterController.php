@@ -20,13 +20,17 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = new User();
+        
         $user->fill([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            
         ]);
+
+        $user->assignRole($request->role);
         $user->save();
+
 
         $verificationUrl = URL::signedRoute('verification.verify', [
             'id' => $user->getKey(),

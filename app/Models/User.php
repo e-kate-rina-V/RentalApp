@@ -22,7 +22,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'role',
     ];
 
     protected $hidden = [
@@ -34,10 +33,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
+    // public function isAdmin()
+    // {
+    //     return $this->role === 'admin';
+    // }
 
     public function chats(): BelongsToMany
     {
@@ -58,24 +57,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return self::select('id', 'email')->get();  
     }
-
-    // public function roles()
-    // {
-    //     return $this->belongsToMany(Role::class);
-    // }
-
-    // public function hasRole($role)
-    // {
-    //     return $this->roles->pluck('name')->contains($role);
-    // }
-
-    // public function hasPermission($permission)
-    // {
-    //     foreach ($this->roles as $role) {
-    //         if ($role->permissions->pluck('name')->contains($permission)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
 }

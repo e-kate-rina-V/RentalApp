@@ -15,15 +15,15 @@ class AdController extends Controller
 {
     public function showAllAds(Request $request): JsonResponse
     {
-        $ads = Ad::with(['materials', 'conveniences'])
-            ->filterByPremType($request->premType)
-            ->filterByAccomType($request->accomType)
-            ->filterByPriceRange($request->priceRange)
-            ->filterByGuestCount($request->guestCount)
-            ->filterByConveniences($request->conveniences)
-            ->paginate(10);
+            $ads = Ad::with(['materials', 'conveniences'])
+                ->filterByPremType($request->premType)
+                ->filterByAccomType($request->accomType)
+                ->filterByPriceRange($request->priceRange)
+                ->filterByGuestCount($request->guestCount)
+                ->filterByConveniences($request->conveniences)
+                ->paginate(10);
 
-        return response()->json($ads);
+            return response()->json($ads);
     }
 
     public function registerAd(RegisterAdRequest $request): JsonResponse
@@ -47,7 +47,7 @@ class AdController extends Controller
                 $convenienceModel->fill([
                     'name' => $convenience,
                 ]);
-                $ad->conveniences()->save($convenienceModel);  
+                $ad->conveniences()->save($convenienceModel);
             }
         }
 
@@ -58,7 +58,7 @@ class AdController extends Controller
                 $material->fill([
                     'source' => $path,
                 ]);
-                $ad->materials()->save($material);  
+                $ad->materials()->save($material);
             }
         } else {
             Log::error('No materials files uploaded');
