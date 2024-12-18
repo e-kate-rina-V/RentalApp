@@ -42,11 +42,9 @@ Route::prefix('ads')->group(function () {
             Route::post('register', 'registerAd');
             Route::get('/', 'showUserAds');
         });
-        Route::middleware(['role:landlord|renter'])->group(function () {
-            Route::get('/{id}', 'showAdById');
-            Route::get('/{ad}/unavailable-dates', 'getUnavailableDates');
-        });
+        Route::get('/{id}', 'showAdById');
     });
+    Route::get('/{ad}/unavailable-dates', [ReservationController::class, 'getUnavailableDates']);
     Route::middleware(['role:landlord|renter'])->get('/{adId}/reviews', [ReviewController::class, 'showReviews']);
 });
 

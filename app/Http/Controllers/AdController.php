@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterAdRequest;
+use App\Http\Resources\AdResource;
 use App\Models\Ad;
 use App\Models\Convenience;
 use App\Models\Material;
@@ -15,38 +16,28 @@ class AdController extends Controller
 {
     public function showAllAds(Request $request): JsonResponse
     {
-            $ads = Ad::with(['materials', 'conveniences'])
-                ->filterByPremType($request->premType)
-                ->filterByAccomType($request->accomType)
-                ->filterByPriceRange($request->priceRange)
-                ->filterByGuestCount($request->guestCount)
-                ->filterByConveniences($request->conveniences)
-                ->paginate(10);
+        $ads = Ad::with(['materials', 'conveniences'])
+            ->filterByPremType($request->premType)
+            ->filterByAccomType($request->accomType)
+            ->filterByPriceRange($request->priceRange)
+            ->filterByGuestCount($request->guestCount)
+            ->filterByConveniences($request->conveniences)
+            ->paginate(10);
 
-            return response()->json($ads);
+        return response()->json($ads);
     }
 
     public function registerAd(RegisterAdRequest $request): JsonResponse
     {
         $ad = new Ad();
-        $ad->fill([
-            'title' => $request->title,
-            'description' => $request->description,
-            'prem_type' => $request->prem_type,
-            'accom_type' => $request->accom_type,
-            'guest_count' => (int) $request->guest_count,
-            'price' => (float) $request->price,
-            'user_id' => auth()->id(),
-        ]);
-
+        $ad->fill($request->only($ad->getFillable()));
+        $ad->user_id = auth()->id();
         $ad->save();
 
         if ($request->has('conven')) {
             foreach ($request->input('conven') as $convenience) {
                 $convenienceModel = new Convenience();
-                $convenienceModel->fill([
-                    'name' => $convenience,
-                ]);
+                $convenienceModel->fill(['name' => $convenience]);
                 $ad->conveniences()->save($convenienceModel);
             }
         }
@@ -55,17 +46,19 @@ class AdController extends Controller
             foreach ($request->file('materials') as $file) {
                 $path = $file->store('materials', 'public');
                 $material = new Material();
-                $material->fill([
-                    'source' => $path,
-                ]);
+                $material->fill(['source' => $path]);
                 $ad->materials()->save($material);
             }
         } else {
             Log::error('No materials files uploaded');
         }
 
-        return response()->json(['message' => 'Ad registered successfully'], 200);
+        return response()->json([
+            'message' => 'Ad registered successfully',
+            'ad' => new AdResource($ad),
+        ], 200);
     }
+
 
     public function showAdById(int $id): JsonResponse
     {

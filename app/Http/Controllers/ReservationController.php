@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateReservationRequest;
+use App\Http\Resources\ReservationResource;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,6 @@ class ReservationController extends Controller
             return response()->json(['error' => 'The selected dates are unavailable'], 422);
         }
 
-
         $reservation = Reservation::create($validated);
 
         Mail::to(auth()->user()->email)->send(new ReservationConfirmed($reservation));
@@ -44,10 +44,9 @@ class ReservationController extends Controller
 
         return response()->json([
             'message' => 'Reservation created successfully',
-            'reservation' => $reservation,
+            'reservation' => new ReservationResource($reservation),
         ], 201);
     }
-
 
     public function getUnavailableDates($adId): JsonResponse
     {
@@ -55,6 +54,10 @@ class ReservationController extends Controller
             ->select('arrival_date', 'depart_date')
             ->get();
 
-        return response()->json($reservations);
+        if ($reservations->isEmpty()) {
+            return response()->json(['message' => 'No unavailable dates found'], 200);
+        }
+
+        return response()->json($reservations, 200);
     }
 }
