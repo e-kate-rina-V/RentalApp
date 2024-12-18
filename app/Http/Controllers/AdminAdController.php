@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminAdController extends Controller
-{
+{    
     public function index()
     {
         $ads = Ad::with('user')->paginate(10);

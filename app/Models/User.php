@@ -33,11 +33,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    // public function isAdmin()
-    // {
-    //     return $this->role === 'admin';
-    // }
-
     public function chats(): BelongsToMany
     {
         return $this->belongsToMany(Chat::class, 'chat_user');
@@ -55,6 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public static function getList()
     {
-        return self::select('id', 'email')->get();  
+        return self::select('id', 'name', 'email')->get();  
     }
 }

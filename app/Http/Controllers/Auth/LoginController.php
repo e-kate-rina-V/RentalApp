@@ -25,17 +25,21 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $role = $user->getRoleNames()->first();  
+            $role = $user->getRoleNames()->first();
+
+            $token = $user->createToken('MyApp')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login successful',
                 'user' => $user,
                 'role' => $role,
+                'token' => $token,  
             ]);
         }
 
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
+
 
 
     public function logout(Request $request): JsonResponse

@@ -22,7 +22,8 @@ class UserController extends Controller
         if ($user) {
             return response()->json($user);
         }
-        
+
         return response()->json(['message' => 'User not found'], 404);
     }
 }
+

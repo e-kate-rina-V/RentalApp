@@ -31,7 +31,7 @@ class RegisterAdRequest extends FormRequest
             'conven' => 'array',
             'conven.*' => 'string|max:255',
             'materials' => 'array',
-            'materials.*' => 'file|mimes:jpeg,png,jpg,avif,mp4,mov|max:2048',
+            'materials.*' => 'file|mimes:jpeg,png,jpg,avif,webp,mp4,mov|max:2048',
         ];
     }
 }

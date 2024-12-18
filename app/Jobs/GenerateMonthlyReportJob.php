@@ -18,26 +18,21 @@ class GenerateMonthlyReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private string $startDate, private string $endDate, private int $userId)
-    {
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
-        $this->userId = $userId;
-    }
+    public function __construct(private string $startDate, private string $endDate, private int $userId) {}
 
     public function handle()
     {
         $adIds = Ad::where('user_id', $this->userId)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
-            ->pluck('id') 
-            ->toArray(); 
-    
-        $totalAds = count($adIds); 
-    
+            ->pluck('id')
+            ->toArray();
+
+        $totalAds = count($adIds);
+
         $income = Reservation::whereIn('ad_id', $adIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->sum('total_cost');
-    
+
         $seasonalData = Reservation::whereIn('ad_id', $adIds)
             ->get()
             ->groupBy(function ($reservation) {
@@ -61,7 +56,7 @@ class GenerateMonthlyReportJob implements ShouldQueue
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->groupBy('date')
             ->get();
-    
+
         Log::info('PDF Data:', [
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
@@ -70,10 +65,10 @@ class GenerateMonthlyReportJob implements ShouldQueue
             'seasonalData' => $seasonalData,
             'incomeTrend' => $incomeTrend,
         ]);
-    
+
         try {
             ob_start();
-    
+
             $pdf = PDF::loadView('reports.monthly', [
                 'startDate' => $this->startDate,
                 'endDate' => $this->endDate,
@@ -83,16 +78,15 @@ class GenerateMonthlyReportJob implements ShouldQueue
                 'incomeTrend' => $incomeTrend->toArray(),
             ]);
             ob_end_clean();
-    
+
             $fileName = 'monthly_report_' . now()->format('Y_m_d_His') . '.pdf';
-    
+
             Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
-    
+
             broadcast(new ReportGenerated($fileName, 'Звіт успішно згенерований'));
         } catch (\Exception $e) {
             Log::error('Ошибка при генерации отчета: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
         }
     }
-    
 }
