@@ -55,9 +55,9 @@ class ReservationController extends Controller
             ->get();
 
         if ($reservations->isEmpty()) {
-            return response()->json(['message' => 'No unavailable dates found'], 200);
+            return response()->json(['message' => 'No unavailable dates found'], 404);
         }
 
-        return response()->json($reservations, 200);
+        return response()->json($reservations);
     }
 }

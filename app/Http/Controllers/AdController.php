@@ -31,14 +31,12 @@ class AdController extends Controller
     {
         $ad = new Ad();
         $ad->fill($request->only($ad->getFillable()));
-        $ad->user_id = auth()->id();
+        $ad->user()->associate(auth()->id());
         $ad->save();
-
+    
         if ($request->has('conven')) {
             foreach ($request->input('conven') as $convenience) {
-                $convenienceModel = new Convenience();
-                $convenienceModel->fill(['name' => $convenience]);
-                $ad->conveniences()->save($convenienceModel);
+                $ad->conveniences()->create(['name' => $convenience]);
             }
         }
 
@@ -52,13 +50,14 @@ class AdController extends Controller
         } else {
             Log::error('No materials files uploaded');
         }
-
+    
         return response()->json([
             'message' => 'Ad registered successfully',
             'ad' => new AdResource($ad),
-        ], 200);
+        ]);
     }
-
+    
+    
 
     public function showAdById(int $id): JsonResponse
     {
@@ -68,7 +67,7 @@ class AdController extends Controller
             return response()->json(['error' => 'Ad not found'], 404);
         }
 
-        return response()->json($ad, 200);
+        return response()->json($ad);
     }
 
     public function showUserAds(): JsonResponse
