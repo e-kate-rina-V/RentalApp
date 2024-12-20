@@ -31,7 +31,7 @@
                 <form action="{{ route('reservations.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Видалити оголошення?')">Видалити</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Видалити бронювання?')">Видалити</button>
                 </form>
             </td>
         </tr>
